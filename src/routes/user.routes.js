@@ -1,0 +1,19 @@
+// Responsabilidad: Definir las rutas del módulo de usuarios.
+// Aplica los middlewares de autenticación y autorización necesarios.
+
+'use strict';
+
+const express = require('express');
+const router = express.Router();
+const userController = require('../controllers/user.controller');
+const authenticate = require('../middlewares/authenticate');
+const authorize = require('../middlewares/authorize');
+
+/**
+ * Route: GET /api/users
+ * Description: Listar todos los usuarios con paginación.
+ * Access: Private (Admin only)
+ */
+router.get('/', authenticate, authorize('admin'), userController.getAll);
+
+module.exports = router;

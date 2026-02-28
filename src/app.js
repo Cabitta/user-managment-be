@@ -10,6 +10,7 @@ const cors = require("cors");
 const morgan = require("morgan");
 const errorHandler = require("./middlewares/errorHandler");
 const authRoutes = require("./routes/auth.routes");
+const userRoutes = require("./routes/user.routes");
 
 const app = express();
 
@@ -27,7 +28,7 @@ app.use(express.json());
 
 // --- Rutas ---
 app.use("/api/auth", authRoutes);
-// app.use('/api/users', userRoutes);
+app.use("/api/users", userRoutes);
 
 // --- Manejo global de errores ---
 app.use(errorHandler);
