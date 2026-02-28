@@ -34,6 +34,23 @@ class UserService {
       pagination: result.pagination
     };
   }
+
+  /**
+   * Obtiene un usuario específico por su ID.
+   * Reservado para administradores.
+   */
+  async getUserById(id) {
+    const user = await userRepository.findById(id);
+    
+    if (!user) {
+      const error = new Error('Usuario no encontrado');
+      error.code = 'NOT_FOUND';
+      error.statusCode = 404;
+      throw error;
+    }
+
+    return userDTO.toResponseDTO(user);
+  }
 }
 
 module.exports = new UserService();

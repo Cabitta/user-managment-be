@@ -20,6 +20,19 @@ class UserController {
       pagination: result.pagination,
     });
   }
+
+  /**
+   * Obtiene un usuario por su ID.
+   */
+  async getById(req, res) {
+    const { id } = req.params;
+    const result = await userService.getUserById(id);
+
+    res.status(200).json({
+      success: true,
+      data: result,
+    });
+  }
 }
 
 module.exports = new UserController();

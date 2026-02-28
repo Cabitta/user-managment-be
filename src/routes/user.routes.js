@@ -16,4 +16,11 @@ const authorize = require('../middlewares/authorize');
  */
 router.get('/', authenticate, authorize('admin'), userController.getAll);
 
+/**
+ * Route: GET /api/users/:id
+ * Description: Obtener un usuario por su ID.
+ * Access: Private (Admin only)
+ */
+router.get('/:id', authenticate, authorize('admin'), userController.getById);
+
 module.exports = router;
