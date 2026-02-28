@@ -6,6 +6,7 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/auth.controller');
+const authenticate = require('../middlewares/authenticate');
 
 /**
  * Route: POST /api/auth/register
@@ -18,5 +19,12 @@ router.post('/register', authController.register);
  * Description: Iniciar sesión y obtener JWT.
  */
 router.post('/login', authController.login);
+
+/**
+ * Route: POST /api/auth/logout
+ * Description: Cerrar sesión e invalidar JWT.
+ * Access: Private (Auth required)
+ */
+router.post('/logout', authenticate, authController.logout);
 
 module.exports = router;

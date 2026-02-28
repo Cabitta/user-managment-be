@@ -4,6 +4,7 @@
 'use strict';
 
 const jwt = require('jsonwebtoken');
+const tokenBlocklist = require('../utils/tokenBlocklist');
 
 const authenticate = (req, res, next) => {
   let token;
@@ -25,8 +26,16 @@ const authenticate = (req, res, next) => {
     return next(error);
   }
 
+  // 4. Verificar si el token está en la blocklist (Logout)
+  if (tokenBlocklist.has(token)) {
+    const error = new Error('Sesión cerrada. Por favor, inicia sesión nuevamente.');
+    error.code = 'UNAUTHORIZED';
+    error.statusCode = 401;
+    return next(error);
+  }
+
   try {
-    // 4. Verificar el token con el secreto del servidor
+    // 5. Verificar el token con el secreto del servidor
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // 5. Inyectar datos del usuario en el request

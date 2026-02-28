@@ -6,6 +6,7 @@
 const userRepository = require('../repositories/user.repository');
 const userDTO = require('../dtos/user.dto');
 const jwt = require('jsonwebtoken');
+const tokenBlocklist = require('../utils/tokenBlocklist');
 
 class AuthService {
   /**
@@ -75,6 +76,14 @@ class AuthService {
       token,
       user: userDTO.toResponseDTO(user),
     };
+  }
+
+  /**
+   * Invalida un token agregándolo a la blocklist.
+   */
+  async logout(token) {
+    tokenBlocklist.add(token);
+    return true;
   }
 }
 

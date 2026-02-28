@@ -38,6 +38,23 @@ class AuthController {
       data: result.user,
     });
   }
+
+  /**
+   * Maneja el cierre de sesión inhabilitando el token actual.
+   */
+  async logout(req, res) {
+    // 1. Extraer el token del header (ya validado por el middleware authenticate)
+    const token = req.headers.authorization.split(' ')[1];
+
+    // 2. Llamar al servicio para invalidar el token
+    await authService.logout(token);
+
+    // 3. Responder con mensaje satisfactorio
+    res.status(200).json({
+      success: true,
+      message: 'Sesión cerrada satisfactoriamente',
+    });
+  }
 }
 
 module.exports = new AuthController();
