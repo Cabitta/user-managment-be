@@ -55,6 +55,28 @@ class AuthController {
       message: 'Sesión cerrada satisfactoriamente',
     });
   }
+
+  /**
+   * Obtiene el perfil del usuario autenticado.
+   */
+  async getMe(req, res) {
+    const result = await authService.getMe(req.user.id);
+    res.status(200).json({
+      success: true,
+      data: result,
+    });
+  }
+
+  /**
+   * Actualiza el perfil del usuario autenticado.
+   */
+  async updateMe(req, res) {
+    const result = await authService.updateMe(req.user.id, req.body);
+    res.status(200).json({
+      success: true,
+      data: result,
+    });
+  }
 }
 
 module.exports = new AuthController();

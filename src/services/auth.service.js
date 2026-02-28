@@ -85,6 +85,55 @@ class AuthService {
     tokenBlocklist.add(token);
     return true;
   }
+
+  /**
+   * Obtiene la información del usuario actual.
+   */
+  async getMe(userId) {
+    const user = await userRepository.findById(userId);
+    if (!user || !user.isActive) {
+      const error = new Error('Usuario no encontrado o inactivo');
+      error.code = 'NOT_FOUND';
+      error.statusCode = 404;
+      throw error;
+    }
+    return userDTO.toResponseDTO(user);
+  }
+
+  /**
+   * Actualiza el perfil del usuario actual.
+   * Solo permite editar: name, email, password.
+   */
+  async updateMe(userId, updateData) {
+    // 1. Filtrar solo campos permitidos para auto-gestión
+    const allowedFields = ['name', 'email', 'password'];
+    const filteredUpdate = {};
+    
+    allowedFields.forEach(field => {
+      if (updateData[field] !== undefined) {
+        filteredUpdate[field] = updateData[field];
+      }
+    });
+
+    if (Object.keys(filteredUpdate).length === 0) {
+      const error = new Error('No se enviaron campos válidos para actualizar');
+      error.code = 'VALIDATION_ERROR';
+      error.statusCode = 400;
+      throw error;
+    }
+
+    // 2. Realizar actualización
+    const updatedUser = await userRepository.update(userId, filteredUpdate);
+    
+    if (!updatedUser) {
+      const error = new Error('No se pudo actualizar el perfil');
+      error.code = 'NOT_FOUND';
+      error.statusCode = 404;
+      throw error;
+    }
+
+    return userDTO.toResponseDTO(updatedUser);
+  }
 }
 
 module.exports = new AuthService();

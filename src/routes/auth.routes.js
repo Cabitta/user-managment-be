@@ -27,4 +27,18 @@ router.post('/login', authController.login);
  */
 router.post('/logout', authenticate, authController.logout);
 
+/**
+ * Route: GET /api/auth/me
+ * Description: Obtener perfil del usuario actual.
+ * Access: Private
+ */
+router.get('/me', authenticate, authController.getMe);
+
+/**
+ * Route: PUT /api/auth/me
+ * Description: Actualizar perfil del usuario actual.
+ * Access: Private
+ */
+router.put('/me', authenticate, authController.updateMe);
+
 module.exports = router;

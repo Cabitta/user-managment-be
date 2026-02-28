@@ -1,4 +1,5 @@
 # Spec — API REST: Administrador de Usuarios
+
 **Versión:** 1.2  
 **Fecha:** 2026-02-26  
 **Metodología:** Spec-Driven Development (SDD)
@@ -12,6 +13,7 @@ Una API REST que permite gestionar usuarios de una aplicación. Soporta registro
 **Objetivo principal:** Proveer un backend seguro, organizado y bien documentado que pueda ser consumido por cualquier cliente (web, mobile, Postman, etc.).
 
 **Alcance de esta versión (v1.0):**
+
 - Autenticación con JWT (registro, login, logout)
 - CRUD completo de usuarios
 - Sistema de roles: `admin` y `user`
@@ -23,18 +25,19 @@ Una API REST que permite gestionar usuarios de una aplicación. Soporta registro
 
 ### Entidad: `User`
 
-| Campo       | Tipo     | Requerido | Descripción                          |
-|-------------|----------|-----------|--------------------------------------|
-| `_id`       | ObjectId | Auto      | ID único generado por MongoDB        |
-| `name`      | String   | Sí        | Nombre completo del usuario          |
-| `email`     | String   | Sí        | Email único, usado para login        |
+| Campo       | Tipo     | Requerido | Descripción                                     |
+| ----------- | -------- | --------- | ----------------------------------------------- |
+| `_id`       | ObjectId | Auto      | ID único generado por MongoDB                   |
+| `name`      | String   | Sí        | Nombre completo del usuario                     |
+| `email`     | String   | Sí        | Email único, usado para login                   |
 | `password`  | String   | Sí        | Hash bcrypt (nunca se devuelve en la respuesta) |
-| `role`      | String   | Sí        | Enum: `"admin"` o `"user"`. Default: `"user"` |
-| `isActive`  | Boolean  | Sí        | Permite soft-delete. Default: `true` |
-| `createdAt` | Date     | Auto      | Timestamp de creación                |
-| `updatedAt` | Date     | Auto      | Timestamp de última actualización    |
+| `role`      | String   | Sí        | Enum: `"admin"` o `"user"`. Default: `"user"`   |
+| `isActive`  | Boolean  | Sí        | Permite soft-delete. Default: `true`            |
+| `createdAt` | Date     | Auto      | Timestamp de creación                           |
+| `updatedAt` | Date     | Auto      | Timestamp de última actualización               |
 
 **Reglas del modelo:**
+
 - `email` debe ser único en la base de datos.
 - `password` debe almacenarse siempre como hash (bcrypt, salt rounds: 10).
 - `password` **nunca** se incluye en las respuestas de la API.
@@ -47,17 +50,20 @@ Una API REST que permite gestionar usuarios de una aplicación. Soporta registro
 
 ### 3.1 Autenticación — `/api/auth`
 
-| Método | Ruta              | Descripción              | Auth requerida |
-|--------|-------------------|--------------------------|----------------|
-| POST   | `/api/auth/register` | Registrar nuevo usuario | No             |
-| POST   | `/api/auth/login`    | Login, devuelve JWT     | No             |
-| POST   | `/api/auth/logout`   | Invalidar sesión        | Sí (JWT)       |
+| Método | Ruta                 | Descripción              | Auth requerida |
+| ------ | -------------------- | ------------------------ | -------------- |
+| POST   | `/api/auth/register` | Registrar nuevo usuario  | No             |
+| POST   | `/api/auth/login`    | Login, devuelve JWT      | No             |
+| POST   | `/api/auth/logout`   | Invalidar sesión         | Sí (JWT)       |
+| GET    | `/api/auth/me`       | Obtener perfil propio    | Sí (JWT)       |
+| PUT    | `/api/auth/me`       | Actualizar perfil propio | Sí (JWT)       |
 
 ---
 
 #### `POST /api/auth/register`
 
 **Request body:**
+
 ```json
 {
   "name": "Ana García",
@@ -67,6 +73,7 @@ Una API REST que permite gestionar usuarios de una aplicación. Soporta registro
 ```
 
 **Response `201 Created`:**
+
 ```json
 {
   "success": true,
@@ -87,6 +94,7 @@ Una API REST que permite gestionar usuarios de una aplicación. Soporta registro
 #### `POST /api/auth/login`
 
 **Request body:**
+
 ```json
 {
   "email": "ana@example.com",
@@ -95,6 +103,7 @@ Una API REST que permite gestionar usuarios de una aplicación. Soporta registro
 ```
 
 **Response `200 OK`:**
+
 ```json
 {
   "success": true,
@@ -117,6 +126,7 @@ El JWT se incluye en la respuesta. El cliente lo guarda y lo envía en cada requ
 **Headers:** `Authorization: Bearer <token>`
 
 **Response `200 OK`:**
+
 ```json
 {
   "success": true,
@@ -128,14 +138,67 @@ El JWT se incluye en la respuesta. El cliente lo guarda y lo envía en cada requ
 
 ---
 
+#### `GET /api/auth/me`
+
+**Headers:** `Authorization: Bearer <token>`
+
+**Response `200 OK`:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "664f1a2b3c4d5e6f7a8b9c0d",
+    "name": "Ana García",
+    "email": "ana@example.com",
+    "role": "user",
+    "createdAt": "2026-02-26T10:00:00.000Z"
+  }
+}
+```
+
+---
+
+#### `PUT /api/auth/me`
+
+**Headers:** `Authorization: Bearer <token>`
+
+**Request body (opcionales):**
+
+```json
+{
+  "name": "Ana G. López",
+  "email": "ana.nueva@example.com",
+  "password": "NuevoPassword123!"
+}
+```
+
+> **Nota:** El usuario no puede cambiar su propio `role` ni `isActive` a través de este endpoint.
+
+**Response `200 OK`:**
+
+````json
+{
+  "success": true,
+  "data": {
+    "_id": "664f1a2b3c4d5e6f7a8b9c0d",
+    "name": "Ana G. López",
+    "email": "ana.nueva@example.com",
+    "role": "user",
+    "updatedAt": "2026-02-26T11:00:00.000Z"
+  }
+}
+
+---
+
 ### 3.2 Usuarios — `/api/users`
 
-| Método | Ruta               | Descripción                  | Rol requerido |
-|--------|--------------------|------------------------------|---------------|
-| GET    | `/api/users`       | Listar todos los usuarios    | `admin`       |
-| GET    | `/api/users/:id`   | Obtener usuario por ID       | `admin` o mismo usuario |
-| PUT    | `/api/users/:id`   | Actualizar usuario           | `admin` o mismo usuario |
-| DELETE | `/api/users/:id`   | Eliminar usuario (soft)      | `admin`       |
+| Método | Ruta             | Descripción               | Rol requerido |
+| ------ | ---------------- | ------------------------- | ------------- |
+| GET    | `/api/users`     | Listar todos los usuarios | `admin`       |
+| GET    | `/api/users/:id` | Obtener usuario por ID    | `admin`       |
+| PUT    | `/api/users/:id` | Actualizar usuario        | `admin`       |
+| DELETE | `/api/users/:id` | Eliminar usuario (soft)   | `admin`       |
 
 > Todos los endpoints de `/api/users` requieren JWT válido.
 
@@ -143,8 +206,9 @@ El JWT se incluye en la respuesta. El cliente lo guarda y lo envía en cada requ
 
 #### `GET /api/users`
 
-**Headers:** `Authorization: Bearer <token>` (rol: admin)  
+**Headers:** `Authorization: Bearer <token>` (rol: admin)
 **Query params opcionales:**
+
 - `page` (default: `1`, mínimo: `1`)
 - `limit` (default: `10`, mínimo: `1`, **máximo: `100`**)
 - `role` — filtrar por rol: `admin` o `user`
@@ -152,6 +216,7 @@ El JWT se incluye en la respuesta. El cliente lo guarda y lo envía en cada requ
 > Si el cliente envía `limit` mayor a 100, el servidor lo recorta silenciosamente a 100.
 
 **Response `200 OK`:**
+
 ```json
 {
   "success": true,
@@ -166,13 +231,13 @@ El JWT se incluye en la respuesta. El cliente lo guarda y lo envía en cada requ
     }
   ],
   "pagination": {
-    "total": 42,        // Total de documentos en la DB que coinciden con el filtro
-    "page": 1,          // Página actual
-    "limit": 10,        // Documentos por página (máx. 100)
-    "totalPages": 5     // Math.ceil(total / limit) — calculado por el servidor
+    "total": 42, // Total de documentos en la DB que coinciden con el filtro
+    "page": 1, // Página actual
+    "limit": 10, // Documentos por página (máx. 100)
+    "totalPages": 5 // Math.ceil(total / limit) — calculado por el servidor
   }
 }
-```
+````
 
 ---
 
@@ -181,6 +246,7 @@ El JWT se incluye en la respuesta. El cliente lo guarda y lo envía en cada requ
 **Headers:** `Authorization: Bearer <token>` (admin o mismo usuario)
 
 **Response `200 OK`:**
+
 ```json
 {
   "success": true,
@@ -203,6 +269,7 @@ El JWT se incluye en la respuesta. El cliente lo guarda y lo envía en cada requ
 **Headers:** `Authorization: Bearer <token>` (admin o mismo usuario)
 
 **Request body** (todos los campos son opcionales):
+
 ```json
 {
   "name": "Ana García López",
@@ -215,6 +282,7 @@ El JWT se incluye en la respuesta. El cliente lo guarda y lo envía en cada requ
 > **Regla:** Solo un `admin` puede cambiar el campo `role`. Un `user` solo puede modificar su propio `name`, `email` y `password`.
 
 **Response `200 OK`:**
+
 ```json
 {
   "success": true,
@@ -237,6 +305,7 @@ El JWT se incluye en la respuesta. El cliente lo guarda y lo envía en cada requ
 Realiza un **soft-delete**: establece `isActive: false`.
 
 **Response `200 OK`:**
+
 ```json
 {
   "success": true,
@@ -250,14 +319,15 @@ Realiza un **soft-delete**: establece `isActive: false`.
 
 **Mecanismo:** JSON Web Tokens (JWT) con algoritmo HS256.
 
-| Parámetro       | Valor                          |
-|-----------------|--------------------------------|
-| Librería        | `jsonwebtoken`                 |
-| Expiración      | 24 horas (`expiresIn: "24h"`) |
-| Header esperado | `Authorization: Bearer <token>` |
+| Parámetro       | Valor                            |
+| --------------- | -------------------------------- |
+| Librería        | `jsonwebtoken`                   |
+| Expiración      | 24 horas (`expiresIn: "24h"`)    |
+| Header esperado | `Authorization: Bearer <token>`  |
 | Secret          | Variable de entorno `JWT_SECRET` |
 
 **Payload del JWT:**
+
 ```json
 {
   "id": "664f1a2b3c4d5e6f7a8b9c0d",
@@ -268,6 +338,7 @@ Realiza un **soft-delete**: establece `isActive: false`.
 ```
 
 **Middlewares de seguridad:**
+
 - `authenticate` — verifica que el JWT sea válido y no esté en la blocklist.
 - `authorize(...roles)` — verifica que el rol del usuario esté permitido para la ruta.
 
@@ -300,14 +371,14 @@ Todas las respuestas de error siguen este formato estándar:
 
 ### Tabla de errores principales
 
-| Código HTTP | `error.code`           | Situación                                     |
-|-------------|------------------------|-----------------------------------------------|
-| 400         | `VALIDATION_ERROR`     | Body inválido o campos faltantes              |
-| 401         | `UNAUTHORIZED`         | JWT ausente, inválido o expirado              |
-| 403         | `FORBIDDEN`            | JWT válido pero sin permisos suficientes      |
-| 404         | `NOT_FOUND`            | Usuario no encontrado                         |
-| 409         | `CONFLICT`             | Email ya registrado                           |
-| 500         | `INTERNAL_SERVER_ERROR`| Error inesperado del servidor                 |
+| Código HTTP | `error.code`            | Situación                                |
+| ----------- | ----------------------- | ---------------------------------------- |
+| 400         | `VALIDATION_ERROR`      | Body inválido o campos faltantes         |
+| 401         | `UNAUTHORIZED`          | JWT ausente, inválido o expirado         |
+| 403         | `FORBIDDEN`             | JWT válido pero sin permisos suficientes |
+| 404         | `NOT_FOUND`             | Usuario no encontrado                    |
+| 409         | `CONFLICT`              | Email ya registrado                      |
+| 500         | `INTERNAL_SERVER_ERROR` | Error inesperado del servidor            |
 
 ---
 
@@ -335,38 +406,38 @@ Request HTTP
 
 **DTOs** son transversales: no pertenecen a una capa específica sino que definen los contratos entre ellas.
 
-| Capa           | Responsabilidad                                              | Conoce        | No conoce               |
-|----------------|--------------------------------------------------------------|---------------|-------------------------|
-| Controller     | HTTP: leer request, escribir response JSON                  | Express       | Mongoose, reglas de negocio |
-| Service        | Reglas de negocio, validaciones de dominio, orquestación    | Repository    | Express, Mongoose       |
-| Repository     | Queries, filtros, paginación                                | Model/Mongoose| Express, reglas de negocio |
-| Model          | Schema, tipos, validaciones de estructura                   | Mongoose      | Todo lo demás           |
-| DTO            | Transformar objetos entre capas (entrada y salida)          | —             | —                       |
+| Capa       | Responsabilidad                                          | Conoce         | No conoce                   |
+| ---------- | -------------------------------------------------------- | -------------- | --------------------------- |
+| Controller | HTTP: leer request, escribir response JSON               | Express        | Mongoose, reglas de negocio |
+| Service    | Reglas de negocio, validaciones de dominio, orquestación | Repository     | Express, Mongoose           |
+| Repository | Queries, filtros, paginación                             | Model/Mongoose | Express, reglas de negocio  |
+| Model      | Schema, tipos, validaciones de estructura                | Mongoose       | Todo lo demás               |
+| DTO        | Transformar objetos entre capas (entrada y salida)       | —              | —                           |
 
 ---
 
 ## 8. Stack Técnico
 
-| Categoría       | Tecnología / Librería       | Propósito                            |
-|-----------------|-----------------------------|--------------------------------------|
-| Runtime         | Node.js (v20+)              | Entorno de ejecución                 |
-| Framework       | Express.js                  | Servidor HTTP y routing              |
-| Base de datos   | MongoDB Atlas               | Almacenamiento en la nube (free tier)|
-| ODM             | Mongoose                    | Modelado y validación de documentos  |
-| Autenticación   | jsonwebtoken                | Generación y verificación de JWT     |
-| Hashing         | bcryptjs                    | Hash de contraseñas                  |
-| Validación      | express-validator           | Validación de request bodies         |
-| Variables de env| dotenv                      | Gestión de secretos y configuración  |
-| Seguridad HTTP  | helmet                      | Headers de seguridad automáticos     |
-| Rate limiting   | express-rate-limit          | Límite de requests por IP (login)    |
-| CORS            | cors                        | Control de acceso desde dominios     |
-| Async errors    | express-async-errors        | Captura errores en controllers async |
-| Logging         | morgan                      | Log de requests HTTP en consola      |
-| Documentación   | swagger-ui-express          | Interfaz visual Swagger en `/api/docs` |
-| Documentación   | swagger-jsdoc               | Genera spec OpenAPI desde JSDoc      |
-| Dev tooling     | nodemon                     | Auto-reload en desarrollo            |
-| HTTP testing    | Postman / Thunder Client    | Pruebas manuales de la API           |
-| Control de versiones | Git + GitHub           | Historial de cambios y repositorio remoto |
+| Categoría            | Tecnología / Librería    | Propósito                                 |
+| -------------------- | ------------------------ | ----------------------------------------- |
+| Runtime              | Node.js (v20+)           | Entorno de ejecución                      |
+| Framework            | Express.js               | Servidor HTTP y routing                   |
+| Base de datos        | MongoDB Atlas            | Almacenamiento en la nube (free tier)     |
+| ODM                  | Mongoose                 | Modelado y validación de documentos       |
+| Autenticación        | jsonwebtoken             | Generación y verificación de JWT          |
+| Hashing              | bcryptjs                 | Hash de contraseñas                       |
+| Validación           | express-validator        | Validación de request bodies              |
+| Variables de env     | dotenv                   | Gestión de secretos y configuración       |
+| Seguridad HTTP       | helmet                   | Headers de seguridad automáticos          |
+| Rate limiting        | express-rate-limit       | Límite de requests por IP (login)         |
+| CORS                 | cors                     | Control de acceso desde dominios          |
+| Async errors         | express-async-errors     | Captura errores en controllers async      |
+| Logging              | morgan                   | Log de requests HTTP en consola           |
+| Documentación        | swagger-ui-express       | Interfaz visual Swagger en `/api/docs`    |
+| Documentación        | swagger-jsdoc            | Genera spec OpenAPI desde JSDoc           |
+| Dev tooling          | nodemon                  | Auto-reload en desarrollo                 |
+| HTTP testing         | Postman / Thunder Client | Pruebas manuales de la API                |
+| Control de versiones | Git + GitHub             | Historial de cambios y repositorio remoto |
 
 ---
 
@@ -413,6 +484,7 @@ user-management-api/
 ## 10. Variables de Entorno
 
 Archivo `.env.example`:
+
 ```
 PORT=3000
 MONGODB_URI=mongodb+srv://<user>:<password>@cluster.mongodb.net/userdb
@@ -426,29 +498,31 @@ NODE_ENV=development
 
 El proyecto se construye en fases. **No se avanza a la siguiente fase hasta que la actual funciona correctamente.**
 
-| Fase | Tarea                                                                    | Entregable verificable                          |
-|------|--------------------------------------------------------------------------|-------------------------------------------------|
-| 1    | Crear repositorio en GitHub, `git init` local, primer commit con README  | Repositorio visible en GitHub                   |
+| Fase | Tarea                                                                                                        | Entregable verificable                                                       |
+| ---- | ------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
+| 1    | Crear repositorio en GitHub, `git init` local, primer commit con README                                      | Repositorio visible en GitHub                                                |
 | 2    | Setup del proyecto: `npm init`, instalar dependencias, configurar `.env` y `app.js` con helmet, cors, morgan | `node server.js` responde en `localhost:3000`, commit "chore: project setup" |
-| 3    | Conexión a MongoDB con Mongoose                                          | Log "DB conectada" al iniciar, commit           |
-| 4    | Modelo `User` con schema de Mongoose                                     | Schema con todas las validaciones, commit       |
-| 5    | DTO de usuario (`toResponseDTO`, `toInternalDTO`)                        | Funciones de transformación listas, commit      |
-| 6    | Repository: `findAll`, `findById`, `findByEmail`, `create`, `update`, `softDelete` | Operaciones contra MongoDB funcionando, commit |
-| 7    | Middleware `errorHandler` global + `express-async-errors`                | Errores inesperados devuelven JSON estándar, commit |
-| 8    | Service + Controller + endpoint `POST /api/auth/register`                | Se crea usuario en MongoDB, password hasheado, commit |
-| 9    | Service + Controller + endpoint `POST /api/auth/login`                   | Devuelve JWT válido, commit                     |
-| 10   | Middleware `authenticate`                                                | Rutas protegidas rechazan requests sin JWT, commit |
-| 11   | Middleware `authorize`                                                   | Rutas admin rechazan usuarios con rol `user`, commit |
-| 12   | Service + Controller + endpoint `POST /api/auth/logout`                  | Token queda invalidado en blocklist, commit     |
-| 13   | Service + Controller + endpoint `GET /api/users` (con paginación)        | Lista usuarios con paginación correcta, commit  |
-| 14   | Service + Controller + endpoint `GET /api/users/:id`                     | Devuelve usuario o 404, commit                  |
-| 15   | Service + Controller + endpoint `PUT /api/users/:id`                     | Actualiza correctamente según rol, commit       |
-| 16   | Service + Controller + endpoint `DELETE /api/users/:id`                  | Soft-delete funciona, commit                    |
-| 17   | Validadores con `express-validator` en todos los endpoints               | Requests inválidos devuelven 400 con detalle, commit |
-| 18   | Configurar Swagger (`swagger-jsdoc` + `swagger-ui-express`)              | Documentación visible en `GET /api/docs`, commit |
-| 19   | Pruebas manuales completas en Postman                                    | Todos los endpoints funcionan según el spec     |
+| 3    | Conexión a MongoDB con Mongoose                                                                              | Log "DB conectada" al iniciar, commit                                        |
+| 4    | Modelo `User` con schema de Mongoose                                                                         | Schema con todas las validaciones, commit                                    |
+| 5    | DTO de usuario (`toResponseDTO`, `toInternalDTO`)                                                            | Funciones de transformación listas, commit                                   |
+| 6    | Repository: `findAll`, `findById`, `findByEmail`, `create`, `update`, `softDelete`                           | Operaciones contra MongoDB funcionando, commit                               |
+| 7    | Middleware `errorHandler` global + `express-async-errors`                                                    | Errores inesperados devuelven JSON estándar, commit                          |
+| 8    | Service + Controller + endpoint `POST /api/auth/register`                                                    | Se crea usuario en MongoDB, password hasheado, commit                        |
+| 9    | Service + Controller + endpoint `POST /api/auth/login`                                                       | Devuelve JWT válido, commit                                                  |
+| 10   | Middleware `authenticate`                                                                                    | Rutas protegidas rechazan requests sin JWT, commit                           |
+| 11   | Middleware `authorize`                                                                                       | Rutas admin rechazan usuarios con rol `user`, commit                         |
+| 12   | Service + Controller + endpoint `POST /api/auth/logout`                                                      | Token queda invalidado en blocklist, commit                                  |
+| 13   | Service + Controller + endpoint `GET /api/users` (con paginación)                                            | Lista usuarios con paginación correcta, commit                               |
+| 14   | Service + Controller + endpoint `GET/PUT /api/auth/me`                                                       | Ver y editar perfil propio, commit                                           |
+| 15   | Service + Controller + endpoint `GET /api/users/:id`                                                         | Devuelve cualquier usuario (solo admin), commit                              |
+| 16   | Service + Controller + endpoint `PUT /api/users/:id`                                                         | Actualiza usuario (solo admin), commit                                       |
+| 17   | Service + Controller + endpoint `DELETE /api/users/:id`                                                      | Soft-delete (solo admin), commit                                             |
+| 18   | Validadores con `express-validator` en todos los endpoints                                                   | Requests inválidos devuelven 400 con detalle, commit                         |
+| 19   | Configurar Swagger (`swagger-jsdoc` + `swagger-ui-express`)                                                  | Documentación visible en `GET /api/docs`, commit                             |
+| 20   | Pruebas manuales completas en Postman                                                                        | Todos los endpoints funcionan según el spec                                  |
 
 **Convención de commits (simplificada):**
+
 - `feat:` — nueva funcionalidad (endpoint, middleware, modelo)
 - `fix:` — corrección de bug
 - `chore:` — configuración, dependencias, setup
@@ -469,4 +543,4 @@ Estas decisiones se tomarán cuando el proyecto evolucione a producción:
 
 ---
 
-*Documento generado como parte del proceso SDD. Ninguna línea de código se escribe antes de que este spec esté acordado.*
+_Documento generado como parte del proceso SDD. Ninguna línea de código se escribe antes de que este spec esté acordado._
