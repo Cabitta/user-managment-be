@@ -9,6 +9,7 @@ const helmet = require("helmet");
 const cors = require("cors");
 const morgan = require("morgan");
 const errorHandler = require("./middlewares/errorHandler");
+const authRoutes = require("./routes/auth.routes");
 
 const app = express();
 
@@ -24,8 +25,8 @@ app.use(morgan("dev"));
 // --- Parseo de JSON en el body ---
 app.use(express.json());
 
-// --- Rutas (se agregarán en fases posteriores) ---
-// app.use('/api/auth', authRoutes);
+// --- Rutas ---
+app.use("/api/auth", authRoutes);
 // app.use('/api/users', userRoutes);
 
 // --- Manejo global de errores ---
