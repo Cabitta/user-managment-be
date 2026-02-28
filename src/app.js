@@ -8,6 +8,7 @@ const express = require("express");
 const helmet = require("helmet");
 const cors = require("cors");
 const morgan = require("morgan");
+const errorHandler = require("./middlewares/errorHandler");
 
 const app = express();
 
@@ -27,7 +28,7 @@ app.use(express.json());
 // app.use('/api/auth', authRoutes);
 // app.use('/api/users', userRoutes);
 
-// --- Manejo global de errores (se implementa en Fase 7) ---
-// app.use(errorHandler);
+// --- Manejo global de errores ---
+app.use(errorHandler);
 
 module.exports = app;
