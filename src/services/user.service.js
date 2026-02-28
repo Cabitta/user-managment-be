@@ -23,25 +23,15 @@ class UserService {
     if (limit < 1) limit = 1;
     if (page < 1) page = 1;
 
-    // 2. Obtener datos del repositorio
-    // El repositorio ya maneja el filtro de isActive: true por defecto si no se pasa.
-    const users = await userRepository.findAll({ page, limit, role });
-    const total = await userRepository.countTotal({ role });
+    // 2. Obtener datos del repositorio (ya devuelve data y pagination)
+    const result = await userRepository.findAll({ page, limit, role });
 
     // 3. Preparar respuesta con DTOs
-    const usersDTO = users.map(user => userDTO.toResponseDTO(user));
-
-    // 4. Calcular metadatos de paginación
-    const totalPages = Math.ceil(total / limit);
+    const usersDTO = result.data.map(user => userDTO.toResponseDTO(user));
 
     return {
       data: usersDTO,
-      pagination: {
-        total,
-        page,
-        limit,
-        totalPages,
-      }
+      pagination: result.pagination
     };
   }
 }
