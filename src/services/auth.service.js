@@ -5,6 +5,7 @@
 
 const userRepository = require('../repositories/user.repository');
 const userDTO = require('../dtos/user.dto');
+const jwt = require('jsonwebtoken');
 
 class AuthService {
   /**
@@ -28,6 +29,52 @@ class AuthService {
 
     // 4. Devolver la respuesta limpia (DTO)
     return userDTO.toResponseDTO(newUser);
+  }
+
+  /**
+   * Valida credenciales y genera un JWT.
+   */
+  async login({ email, password }) {
+    // 1. Buscar usuario por email (incluyendo password)
+    const user = await userRepository.findByEmail(email);
+
+    // 2. Validar existencia
+    if (!user) {
+      const error = new Error('Credenciales inválidas');
+      error.code = 'UNAUTHORIZED';
+      error.statusCode = 401;
+      throw error;
+    }
+
+    // 3. Validar si el usuario está activo (Regla de negocio #5)
+    if (!user.isActive) {
+      const error = new Error('Tu cuenta ha sido desactivada. Contacta al administrador.');
+      error.code = 'FORBIDDEN';
+      error.statusCode = 403;
+      throw error;
+    }
+
+    // 4. Verificar contraseña
+    const isPasswordCorrect = await user.comparePassword(password);
+    if (!isPasswordCorrect) {
+      const error = new Error('Credenciales inválidas');
+      error.code = 'UNAUTHORIZED';
+      error.statusCode = 401;
+      throw error;
+    }
+
+    // 5. Generar JWT (Sección 4 del spec)
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    // 6. Devolver token y data del usuario
+    return {
+      token,
+      user: userDTO.toResponseDTO(user),
+    };
   }
 }
 

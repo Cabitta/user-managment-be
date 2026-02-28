@@ -21,6 +21,23 @@ class AuthController {
       data: newUser,
     });
   }
+
+  /**
+   * Maneja el inicio de sesión.
+   */
+  async login(req, res) {
+    const { email, password } = req.body;
+
+    // 1. Llamar al servicio para loguear
+    const result = await authService.login({ email, password });
+
+    // 2. Responder con el token y los datos del usuario
+    res.status(200).json({
+      success: true,
+      token: result.token,
+      data: result.user,
+    });
+  }
 }
 
 module.exports = new AuthController();

@@ -13,4 +13,10 @@ const authController = require('../controllers/auth.controller');
  */
 router.post('/register', authController.register);
 
+/**
+ * Route: POST /api/auth/login
+ * Description: Iniciar sesión y obtener JWT.
+ */
+router.post('/login', authController.login);
+
 module.exports = router;
