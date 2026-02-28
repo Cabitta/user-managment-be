@@ -11,11 +11,11 @@ class UserRepository {
    * Por defecto solo busca usuarios activos.
    */
   async findAll(filters = {}, options = {}) {
-    const { page = 1, limit = 10, role } = filters;
+    const { page = 1, limit = 10, role, isActive } = filters;
     
-    // Filtros base: siempre buscamos activos a menos que sea explícito
-    const query = { isActive: true };
+    const query = {};
     if (role) query.role = role;
+    if (isActive !== undefined) query.isActive = isActive;
 
     // Lógica de paginación
     const skip = (page - 1) * limit;
