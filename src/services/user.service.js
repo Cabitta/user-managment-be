@@ -86,6 +86,32 @@ class UserService {
 
     return userDTO.toResponseDTO(updatedUser);
   }
+
+  /**
+   * Realiza un borrado lógico del usuario.
+   * El usuario no puede eliminarse a sí mismo.
+   */
+  async deleteUser(id, currentAdminId) {
+    // 1. Validar auto-borrado
+    if (id === currentAdminId) {
+      const error = new Error('Un administrador no puede eliminarse a sí mismo');
+      error.code = 'BAD_REQUEST';
+      error.statusCode = 400;
+      throw error;
+    }
+
+    // 2. Ejecutar soft delete
+    const result = await userRepository.softDelete(id);
+
+    if (!result) {
+      const error = new Error('Usuario no encontrado');
+      error.code = 'NOT_FOUND';
+      error.statusCode = 404;
+      throw error;
+    }
+
+    return { message: 'Usuario desactivado correctamente' };
+  }
 }
 
 module.exports = new UserService();

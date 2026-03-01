@@ -46,6 +46,19 @@ class UserController {
       data: result,
     });
   }
+
+  /**
+   * Elimina lógicamente un usuario.
+   */
+  async deleteUser(req, res) {
+    const { id } = req.params;
+    const result = await userService.deleteUser(id, req.user.id);
+
+    res.status(200).json({
+      success: true,
+      message: result.message,
+    });
+  }
 }
 
 module.exports = new UserController();

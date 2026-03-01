@@ -30,4 +30,11 @@ router.get('/:id', authenticate, authorize('admin'), userController.getById);
  */
 router.put('/:id', authenticate, authorize('admin'), userController.update);
 
+/**
+ * Route: DELETE /api/users/:id
+ * Description: Eliminar un usuario por su ID (soft-delete).
+ * Access: Private (Admin only)
+ */
+router.delete('/:id', authenticate, authorize('admin'), userController.deleteUser);
+
 module.exports = router;
