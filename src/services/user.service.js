@@ -51,6 +51,41 @@ class UserService {
 
     return userDTO.toResponseDTO(user);
   }
+
+  /**
+   * Actualiza cualquier usuario.
+   * Reservado para administradores.
+   */
+  async updateUser(id, updateData) {
+    // 1. Filtrar campos permitidos para Admin
+    const allowedFields = ['name', 'email', 'password', 'role', 'isActive'];
+    const filteredUpdate = {};
+
+    allowedFields.forEach(field => {
+      if (updateData[field] !== undefined) {
+        filteredUpdate[field] = updateData[field];
+      }
+    });
+
+    if (Object.keys(filteredUpdate).length === 0) {
+      const error = new Error('No se enviaron campos válidos para actualizar');
+      error.code = 'VALIDATION_ERROR';
+      error.statusCode = 400;
+      throw error;
+    }
+
+    // 2. Ejecutar actualización
+    const updatedUser = await userRepository.update(id, filteredUpdate);
+
+    if (!updatedUser) {
+      const error = new Error('Usuario no encontrado');
+      error.code = 'NOT_FOUND';
+      error.statusCode = 404;
+      throw error;
+    }
+
+    return userDTO.toResponseDTO(updatedUser);
+  }
 }
 
 module.exports = new UserService();

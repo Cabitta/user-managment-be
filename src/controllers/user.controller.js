@@ -33,6 +33,19 @@ class UserController {
       data: result,
     });
   }
+
+  /**
+   * Actualiza un usuario por su ID.
+   */
+  async update(req, res) {
+    const { id } = req.params;
+    const result = await userService.updateUser(id, req.body);
+
+    res.status(200).json({
+      success: true,
+      data: result,
+    });
+  }
 }
 
 module.exports = new UserController();

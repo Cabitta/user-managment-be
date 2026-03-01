@@ -173,11 +173,11 @@ El JWT se incluye en la respuesta. El cliente lo guarda y lo envía en cada requ
 }
 ```
 
-> **Nota:** El usuario no puede cambiar su propio `role` ni `isActive` a través de este endpoint.
+> **Nota de seguridad:** El usuario no puede cambiar su propio `role` ni `isActive`. Los campos `createdAt` y `updatedAt` son protegidos: `createdAt` no se puede modificar y `updatedAt` se actualiza automáticamente por el sistema; cualquier valor enviado para estos campos en el request será ignorado.
 
 **Response `200 OK`:**
 
-````json
+```json
 {
   "success": true,
   "data": {
@@ -188,6 +188,7 @@ El JWT se incluye en la respuesta. El cliente lo guarda y lo envía en cada requ
     "updatedAt": "2026-02-26T11:00:00.000Z"
   }
 }
+```
 
 ---
 
@@ -200,7 +201,7 @@ El JWT se incluye en la respuesta. El cliente lo guarda y lo envía en cada requ
 | PUT    | `/api/users/:id` | Actualizar usuario        | `admin`       |
 | DELETE | `/api/users/:id` | Eliminar usuario (soft)   | `admin`       |
 
-> Todos los endpoints de `/api/users` requieren JWT válido.
+> Todos los endpoints de `/api/users` requieren JWT válido y rol `admin`.
 
 ---
 
@@ -237,7 +238,7 @@ El JWT se incluye en la respuesta. El cliente lo guarda y lo envía en cada requ
     "totalPages": 5 // Math.ceil(total / limit) — calculado por el servidor
   }
 }
-````
+```
 
 ---
 
@@ -266,7 +267,7 @@ El JWT se incluye en la respuesta. El cliente lo guarda y lo envía en cada requ
 
 #### `PUT /api/users/:id`
 
-**Headers:** `Authorization: Bearer <token>` (admin o mismo usuario)
+**Headers:** `Authorization: Bearer <token>` (admin)
 
 **Request body** (todos los campos son opcionales):
 
@@ -279,7 +280,7 @@ El JWT se incluye en la respuesta. El cliente lo guarda y lo envía en cada requ
 }
 ```
 
-> **Regla:** Solo un `admin` puede cambiar el campo `role`. Un `user` solo puede modificar su propio `name`, `email` y `password`.
+> **Nota de seguridad (Admin):** Aunque el administrador tiene permisos elevados, los campos `createdAt` y `updatedAt` siguen las mismas reglas de integridad: No se permite la modificación manual de `createdAt` y `updatedAt` se gestiona automáticamente por el servidor. Cualesquiera valores enviados para estos campos serán ignorados.
 
 **Response `200 OK`:**
 

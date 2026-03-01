@@ -106,6 +106,8 @@ class AuthService {
    */
   async updateMe(userId, updateData) {
     // 1. Filtrar solo campos permitidos para auto-gestión
+    // createdAt y updatedAt son manejados automáticamente por Mongoose (timestamps: true)
+    // y no se permiten modificar manualmente.
     const allowedFields = ['name', 'email', 'password'];
     const filteredUpdate = {};
     

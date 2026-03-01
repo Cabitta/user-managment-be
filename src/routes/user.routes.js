@@ -23,4 +23,11 @@ router.get('/', authenticate, authorize('admin'), userController.getAll);
  */
 router.get('/:id', authenticate, authorize('admin'), userController.getById);
 
+/**
+ * Route: PUT /api/users/:id
+ * Description: Actualizar un usuario por su ID.
+ * Access: Private (Admin only)
+ */
+router.put('/:id', authenticate, authorize('admin'), userController.update);
+
 module.exports = router;
