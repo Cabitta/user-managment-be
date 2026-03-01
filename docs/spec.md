@@ -520,7 +520,6 @@ El proyecto se construye en fases. **No se avanza a la siguiente fase hasta que 
 | 17   | Service + Controller + endpoint `DELETE /api/users/:id`                                                      | Soft-delete (solo admin), commit                                             |
 | 18   | Validadores con `express-validator` en todos los endpoints                                                   | Requests inválidos devuelven 400 con detalle, commit                         |
 | 19   | Configurar Swagger (`swagger-jsdoc` + `swagger-ui-express`)                                                  | Documentación visible en `GET /api/docs`, commit                             |
-| 20   | Pruebas manuales completas en Postman                                                                        | Todos los endpoints funcionan según el spec                                  |
 
 **Convención de commits (simplificada):**
 

@@ -40,7 +40,27 @@ src/
 
 ## Variables de entorno
 
-Copiá `.env.example` a `.env` y completá los valores.
+Copiá `.env.example` a `.env` y completá los valores (especialmente `MONGODB_URI` y `JWT_SECRET`).
+
+## Cómo empezar
+
+1.  **Instalar dependencias:**
+
+    ```bash
+    npm install
+    ```
+
+2.  **Configurar variables de entorno:**
+    Asegurate de tener el archivo `.env` listo.
+
+3.  **Iniciar el servidor:**
+    - **Desarrollo (con auto-reload):** `npm run dev`
+    - **Producción:** `npm start`
+
+## Documentación API
+
+Una vez levantado el backend, podés acceder a la documentación interactiva en:
+👉 **[http://localhost:3000/api/docs](http://localhost:3000/api/docs)**
 
 ## Licencia
 
