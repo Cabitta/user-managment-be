@@ -8,13 +8,15 @@ const router = express.Router();
 const userController = require('../controllers/user.controller');
 const authenticate = require('../middlewares/authenticate');
 const authorize = require('../middlewares/authorize');
+const { getAllValidator, updateUserValidator } = require('../validators/user.validators');
+const handleValidationErrors = require('../middlewares/validation.middleware');
 
 /**
  * Route: GET /api/users
  * Description: Listar todos los usuarios con paginación.
  * Access: Private (Admin only)
  */
-router.get('/', authenticate, authorize('admin'), userController.getAll);
+router.get('/', authenticate, authorize('admin'), getAllValidator, handleValidationErrors, userController.getAll);
 
 /**
  * Route: GET /api/users/:id
@@ -28,7 +30,7 @@ router.get('/:id', authenticate, authorize('admin'), userController.getById);
  * Description: Actualizar un usuario por su ID.
  * Access: Private (Admin only)
  */
-router.put('/:id', authenticate, authorize('admin'), userController.update);
+router.put('/:id', authenticate, authorize('admin'), updateUserValidator, handleValidationErrors, userController.update);
 
 /**
  * Route: DELETE /api/users/:id

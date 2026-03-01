@@ -7,18 +7,18 @@ const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/auth.controller');
 const authenticate = require('../middlewares/authenticate');
+const { registerValidator, loginValidator, updateMeValidator } = require('../validators/auth.validators');
+const handleValidationErrors = require('../middlewares/validation.middleware');
 
 /**
- * Route: POST /api/auth/register
  * Description: Registrar un nuevo usuario del sistema.
  */
-router.post('/register', authController.register);
+router.post('/register', registerValidator, handleValidationErrors, authController.register);
 
 /**
- * Route: POST /api/auth/login
  * Description: Iniciar sesión y obtener JWT.
  */
-router.post('/login', authController.login);
+router.post('/login', loginValidator, handleValidationErrors, authController.login);
 
 /**
  * Route: POST /api/auth/logout
@@ -39,6 +39,6 @@ router.get('/me', authenticate, authController.getMe);
  * Description: Actualizar perfil del usuario actual.
  * Access: Private
  */
-router.put('/me', authenticate, authController.updateMe);
+router.put('/me', authenticate, updateMeValidator, handleValidationErrors, authController.updateMe);
 
 module.exports = router;
