@@ -1,18 +1,18 @@
 // Responsabilidad: Centralizar todas las operaciones de acceso a MongoDB para la entidad User.
 // Sigue el Repository Pattern para abstraer Mongoose del resto de la aplicación.
 
-'use strict';
+"use strict";
 
-const User = require('../models/user.model');
+const User = require("../models/user.model");
 
 class UserRepository {
   /**
    * Busca usuarios con filtros, paginación y ordenamiento.
-   * Por defecto solo busca usuarios activos.
+   * Por defecto busca todos los usuarios (activos e inactivos).
    */
   async findAll(filters = {}, options = {}) {
     const { page = 1, limit = 10, role, isActive } = filters;
-    
+
     const query = {};
     if (role) query.role = role;
     if (isActive !== undefined) query.isActive = isActive;
@@ -41,7 +41,7 @@ class UserRepository {
    * Incluye la contraseña por si es necesario para procesos internos (ej: cambio de password).
    */
   async findById(id) {
-    return await User.findById(id).select('+password');
+    return await User.findById(id).select("+password");
   }
 
   /**
@@ -50,7 +50,9 @@ class UserRepository {
    */
   async findByEmail(email) {
     // lowercase para asegurar match consistente
-    return await User.findOne({ email: email.toLowerCase() }).select('+password');
+    return await User.findOne({ email: email.toLowerCase() }).select(
+      "+password",
+    );
   }
 
   /**

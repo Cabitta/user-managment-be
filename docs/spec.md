@@ -350,7 +350,7 @@ Realiza un **soft-delete**: establece `isActive: false`.
 1. El **primer usuario registrado** obtiene el rol `admin` automáticamente. Los siguientes reciben `user` por defecto.
 2. Un usuario **no puede eliminarse a sí mismo**, incluso si es admin.
 3. El **único admin** no puede ser degradado a `user` si no existe al menos otro admin activo.
-4. Solo se listan usuarios con `isActive: true` en `GET /api/users` (a menos que el admin use filtro explícito — fuera del alcance de v1.0).
+4. En `GET /api/users`, el administrador visualiza a todos los usuarios (activos e inactivos) para tener una gestión completa del sistema.
 5. Si se intenta login con un usuario inactivo (`isActive: false`), se devuelve error `403 Forbidden`.
 6. Las **contraseñas** deben tener mínimo 8 caracteres, al menos una letra mayúscula, una minúscula y un número.
 
