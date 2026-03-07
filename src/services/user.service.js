@@ -12,7 +12,7 @@ class UserService {
    * Reservado para administradores.
    */
   async getAllUsers(filters = {}) {
-    let { page = 1, limit = 10, role } = filters;
+    let { page = 1, limit = 10, role, search } = filters;
 
     // 1. Normalización de parámetros (Regla de negocio #4.4)
     page = parseInt(page, 10) || 1;
@@ -24,7 +24,7 @@ class UserService {
     if (page < 1) page = 1;
 
     // 2. Obtener datos del repositorio (ya devuelve data y pagination)
-    const result = await userRepository.findAll({ page, limit, role });
+    const result = await userRepository.findAll({ page, limit, role, search });
 
     // 3. Preparar respuesta con DTOs
     const usersDTO = result.data.map(user => userDTO.toResponseDTO(user));

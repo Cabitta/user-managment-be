@@ -29,6 +29,10 @@ const handleValidationErrors = require('../middlewares/validation.middleware');
  *       - in: query
  *         name: role
  *         schema: { type: string, enum: [admin, user] }
+ *       - in: query
+ *         name: search
+ *         schema: { type: string }
+ *         description: Buscar por nombre o email (parcial, case-insensitive)
  *     responses:
  *       200:
  *         description: Lista de usuarios obtenida

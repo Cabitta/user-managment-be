@@ -213,8 +213,10 @@ El JWT se incluye en la respuesta. El cliente lo guarda y lo envía en cada requ
 - `page` (default: `1`, mínimo: `1`)
 - `limit` (default: `10`, mínimo: `1`, **máximo: `100`**)
 - `role` — filtrar por rol: `admin` o `user`
+- `search` — buscar por nombre o email (máx. 100 caracteres, case-insensitive)
 
-> Si el cliente envía `limit` mayor a 100, el servidor lo recorta silenciosamente a 100.
+> Si el cliente envía `limit` mayor a 100, el servidor lo recorta silenciosamente a 100.  
+> `search` filtra simultáneamente sobre `name` y `email` usando regex. Se puede combinar con `role` y `page`.
 
 **Response `200 OK`:**
 
@@ -514,6 +516,7 @@ El proyecto se construye en fases. **No se avanza a la siguiente fase hasta que 
 | 11   | Middleware `authorize`                                                                                       | Rutas admin rechazan usuarios con rol `user`, commit                         |
 | 12   | Service + Controller + endpoint `POST /api/auth/logout`                                                      | Token queda invalidado en blocklist, commit                                  |
 | 13   | Service + Controller + endpoint `GET /api/users` (con paginación)                                            | Lista usuarios con paginación correcta, commit                               |
+| 13b  | Agregar parámetro `search` a repository, service y validators de `GET /api/users`                            | `?search=ana` filtra por nombre y email correctamente, commit                |
 | 14   | Service + Controller + endpoint `GET/PUT /api/auth/me`                                                       | Ver y editar perfil propio, commit                                           |
 | 15   | Service + Controller + endpoint `GET /api/users/:id`                                                         | Devuelve cualquier usuario (solo admin), commit                              |
 | 16   | Service + Controller + endpoint `PUT /api/users/:id`                                                         | Actualiza usuario (solo admin), commit                                       |

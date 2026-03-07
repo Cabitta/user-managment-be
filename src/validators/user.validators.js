@@ -16,6 +16,11 @@ const getAllValidator = [
   query('role')
     .optional()
     .isIn(['admin', 'user']).withMessage('El rol solicitado no es válido'),
+  
+  query('search')
+    .optional()
+    .trim()
+    .isLength({ max: 100 }).withMessage('El término de búsqueda no puede superar los 100 caracteres'),
 ];
 
 const updateUserValidator = [
