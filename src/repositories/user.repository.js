@@ -75,17 +75,22 @@ class UserRepository {
    * Actualiza un usuario existente.
    */
   async update(id, updateData) {
-    return await User.findByIdAndUpdate(id, updateData, {
-      new: true, // devuelve el documento actualizado
-      runValidators: true, // aplica validaciones del schema en el update
+    const user = await User.findById(id).select('+password');
+    if (!user) return null;
+
+    // Aplicar los cambios al objeto de Mongoose para que detecte las modificaciones (isModified)
+    Object.keys(updateData).forEach((key) => {
+      user[key] = updateData[key];
     });
+
+    return await user.save();
   }
 
   /**
    * Realiza un borrado lógico (soft-delete).
    */
   async softDelete(id) {
-    return await User.findByIdAndUpdate(id, { isActive: false }, { new: true });
+    return await User.findByIdAndUpdate(id, { isActive: false }, { returnDocument: 'after' });
   }
 
   /**
