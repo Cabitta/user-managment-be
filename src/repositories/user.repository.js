@@ -94,6 +94,13 @@ class UserRepository {
   }
 
   /**
+   * Cuenta cuántos administradores activos existen.
+   */
+  async countActiveAdmins() {
+    return await User.countDocuments({ role: 'admin', isActive: true });
+  }
+
+  /**
    * Cuenta cuántos usuarios hay en total (útil para lógica de primer admin).
    */
   async countTotal() {

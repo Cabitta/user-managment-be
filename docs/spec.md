@@ -350,7 +350,7 @@ Realiza un **soft-delete**: establece `isActive: false`.
 ## 5. Reglas de Negocio
 
 1. El **primer usuario registrado** obtiene el rol `admin` automáticamente. Los siguientes reciben `user` por defecto.
-2. Un usuario **no puede eliminarse a sí mismo**, incluso si es admin.
+2. Se permite a un usuario **eliminarse a sí mismo**, a menos que sea el **último administrador activo** del sistema (para evitar quedar sin administración).
 3. El **único admin** no puede ser degradado a `user` si no existe al menos otro admin activo.
 4. En `GET /api/users`, el administrador visualiza a todos los usuarios (activos e inactivos) para tener una gestión completa del sistema.
 5. Si se intenta login con un usuario inactivo (`isActive: false`), se devuelve error `403 Forbidden`.

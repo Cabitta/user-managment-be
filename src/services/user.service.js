@@ -92,23 +92,28 @@ class UserService {
    * El usuario no puede eliminarse a sí mismo.
    */
   async deleteUser(id, currentAdminId) {
-    // 1. Validar auto-borrado
-    if (id === currentAdminId) {
-      const error = new Error('Un administrador no puede eliminarse a sí mismo');
-      error.code = 'BAD_REQUEST';
-      error.statusCode = 400;
-      throw error;
-    }
-
-    // 2. Ejecutar soft delete
-    const result = await userRepository.softDelete(id);
-
-    if (!result) {
+    // 1. Buscar al usuario que se quiere eliminar
+    const userToDelete = await userRepository.findById(id);
+    if (!userToDelete) {
       const error = new Error('Usuario no encontrado');
       error.code = 'NOT_FOUND';
       error.statusCode = 404;
       throw error;
     }
+
+    // 2. Si el usuario es ADMIN activo, verificar si es el último
+    if (userToDelete.role === 'admin' && userToDelete.isActive) {
+      const activeAdmins = await userRepository.countActiveAdmins();
+      if (activeAdmins <= 1) {
+        const error = new Error('No se puede eliminar al último administrador activo del sistema');
+        error.code = 'BAD_REQUEST';
+        error.statusCode = 400;
+        throw error;
+      }
+    }
+
+    // 3. Ejecutar soft delete
+    await userRepository.softDelete(id);
 
     return { message: 'Usuario desactivado correctamente' };
   }
