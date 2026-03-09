@@ -136,6 +136,15 @@ class AuthService {
 
     return userDTO.toResponseDTO(updatedUser);
   }
+
+  /**
+   * Elimina el perfil del usuario actual (borrado lógico).
+   * Delega en UserService para validar la regla del último admin.
+   */
+  async deleteMe(userId) {
+    const userService = require('./user.service');
+    return await userService.deleteUser(userId, userId);
+  }
 }
 
 module.exports = new AuthService();

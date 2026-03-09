@@ -77,6 +77,17 @@ class AuthController {
       data: result,
     });
   }
+
+  /**
+   * Elimina el perfil del usuario autenticado.
+   */
+  async deleteMe(req, res) {
+    await authService.deleteMe(req.user.id);
+    res.status(200).json({
+      success: true,
+      message: 'Tu cuenta ha sido eliminada (desactivada) satisfactoriamente',
+    });
+  }
 }
 
 module.exports = new AuthController();

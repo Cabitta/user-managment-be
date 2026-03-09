@@ -57,6 +57,7 @@ Una API REST que permite gestionar usuarios de una aplicación. Soporta registro
 | POST   | `/api/auth/logout`   | Invalidar sesión         | Sí (JWT)       |
 | GET    | `/api/auth/me`       | Obtener perfil propio    | Sí (JWT)       |
 | PUT    | `/api/auth/me`       | Actualizar perfil propio | Sí (JWT)       |
+| DELETE | `/api/auth/me`       | Eliminar perfil propio   | Sí (JWT)       |
 
 ---
 

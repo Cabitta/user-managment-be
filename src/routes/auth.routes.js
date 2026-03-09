@@ -35,7 +35,7 @@ const handleValidationErrors = require('../middlewares/validation.middleware');
  *             schema:
  *               type: object
  *               properties:
- *                 success: { type: boolean, example: true }
+ *                 success: { type: 'boolean', example: true }
  *                 data: { $ref: '#/components/schemas/User' }
  *       400:
  *         description: Error de validación
@@ -71,7 +71,7 @@ router.post('/register', registerValidator, handleValidationErrors, authControll
  *             schema:
  *               type: object
  *               properties:
- *                 success: { type: boolean, example: true }
+ *                 success: { type: 'boolean', example: true }
  *                 token: { type: string }
  *                 data: { $ref: '#/components/schemas/User' }
  *       400:
@@ -115,7 +115,7 @@ router.post('/logout', authenticate, authController.logout);
  *             schema:
  *               type: object
  *               properties:
- *                 success: { type: boolean, example: true }
+ *                 success: { type: 'boolean', example: true }
  *                 data: { $ref: '#/components/schemas/User' }
  *       401:
  *         description: No autorizado
@@ -140,8 +140,21 @@ router.post('/logout', authenticate, authController.logout);
  *         description: Datos inválidos
  *       401:
  *         description: No autorizado
+ *   delete:
+ *     summary: Eliminar perfil propio
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Perfil eliminado satisfactoriamente
+ *       400:
+ *         description: No se puede eliminar al último admin
+ *       401:
+ *         description: No autorizado
  */
 router.get('/me', authenticate, authController.getMe);
 router.put('/me', authenticate, updateMeValidator, handleValidationErrors, authController.updateMe);
+router.delete('/me', authenticate, authController.deleteMe);
 
 module.exports = router;
