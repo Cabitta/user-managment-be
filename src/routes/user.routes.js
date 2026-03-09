@@ -22,10 +22,10 @@ const handleValidationErrors = require('../middlewares/validation.middleware');
  *     parameters:
  *       - in: query
  *         name: page
- *         schema: { type: integer, minimum: 1, default: 1 }
+ *         schema: { type: 'integer', minimum: 1, default: 1 }
  *       - in: query
  *         name: limit
- *         schema: { type: integer, minimum: 1, maximum: 100, default: 10 }
+ *         schema: { type: 'integer', minimum: 1, maximum: 100, default: 10 }
  *       - in: query
  *         name: role
  *         schema: { type: string, enum: [admin, user] }
