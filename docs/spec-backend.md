@@ -449,6 +449,11 @@ Request HTTP
 
 ```
 user-management-api/
+├── docs/                      # Documentación y especificaciones
+│   ├── SKILL-testing-backend.md
+│   ├── SKILL.md
+│   ├── spec-backend.md
+│   └── spec-testing-backend.md
 ├── src/
 │   ├── config/
 │   │   ├── db.js              # Conexión a MongoDB
@@ -456,22 +461,25 @@ user-management-api/
 │   ├── controllers/
 │   │   ├── auth.controller.js
 │   │   └── user.controller.js
-│   ├── services/
-│   │   ├── auth.service.js    # Lógica de negocio de autenticación
-│   │   └── user.service.js    # Lógica de negocio de usuarios
-│   ├── repositories/
-│   │   └── user.repository.js # Queries y acceso a MongoDB
 │   ├── dtos/
 │   │   └── user.dto.js        # Transformaciones de entrada y salida
 │   ├── middlewares/
 │   │   ├── authenticate.js    # Verificar JWT
 │   │   ├── authorize.js       # Verificar rol
-│   │   └── errorHandler.js    # Manejo global de errores
+│   │   ├── errorHandler.js    # Manejo global de errores
+│   │   └── validation.middleware.js # Manejo de errores de express-validator
 │   ├── models/
 │   │   └── user.model.js      # Schema de Mongoose
+│   ├── repositories/
+│   │   └── user.repository.js # Queries y acceso a MongoDB
 │   ├── routes/
 │   │   ├── auth.routes.js
 │   │   └── user.routes.js
+│   ├── services/
+│   │   ├── auth.service.js    # Lógica de negocio de autenticación
+│   │   └── user.service.js    # Lógica de negocio de usuarios
+│   ├── utils/
+│   │   └── tokenBlocklist.js  # Blocklist en memoria para JWT
 │   ├── validators/
 │   │   ├── auth.validators.js
 │   │   └── user.validators.js
@@ -480,6 +488,8 @@ user-management-api/
 ├── .env.example               # Plantilla de variables (sí en git)
 ├── .gitignore
 ├── package.json
+├── package-lock.json
+├── README.md
 └── server.js                  # Entry point (listen)
 ```
 
@@ -531,6 +541,7 @@ El proyecto se construye en fases. **No se avanza a la siguiente fase hasta que 
 - `fix:` — corrección de bug
 - `chore:` — configuración, dependencias, setup
 - `docs:` — cambios en documentación o Swagger
+- `test:` — agregar o modificar tests
 
 ---
 
