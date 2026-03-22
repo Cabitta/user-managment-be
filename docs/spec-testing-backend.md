@@ -118,55 +118,50 @@ Los services se testean de forma **completamente aislada**. Todas las dependenci
 
 #### `register(userData)`
 
-| Caso | Tipo     | Descripción                   | Resultado esperado             |
-| ---- | -------- | ----------------------------- | ------------------------------ |
-| 1    | ✅ Happy | Primer usuario registrado     | Se crea con `role: 'admin'`    |
-| 2    | ✅ Happy | Segundo usuario registrado    | Se crea con `role: 'user'`     |
-| 3    | ❌ Sad   | Email ya existente            | Lanza error `CONFLICT`         |
-| 4    | ❌ Sad   | Password sin mayúscula        | Lanza error `VALIDATION_ERROR` |
-| 5    | ❌ Sad   | Password sin número           | Lanza error `VALIDATION_ERROR` |
-| 6    | ❌ Sad   | Password menor a 8 caracteres | Lanza error `VALIDATION_ERROR` |
+| Caso | Tipo     | Descripción                | Resultado esperado          |
+| ---- | -------- | -------------------------- | --------------------------- |
+| 1    | ✅ Happy | Primer usuario registrado  | Se crea con `role: 'admin'` |
+| 2    | ✅ Happy | Segundo usuario registrado | Se crea con `role: 'user'`  |
 
 #### `login({ email, password })`
 
 | Caso | Tipo     | Descripción                          | Resultado esperado                     |
 | ---- | -------- | ------------------------------------ | -------------------------------------- |
-| 7    | ✅ Happy | Credenciales correctas               | Devuelve token JWT y datos del usuario |
-| 8    | ❌ Sad   | Email no existe                      | Lanza error `UNAUTHORIZED`             |
-| 9    | ❌ Sad   | Password incorrecta                  | Lanza error `UNAUTHORIZED`             |
-| 10   | ❌ Sad   | Usuario inactivo (`isActive: false`) | Lanza error `FORBIDDEN`                |
+| 3    | ✅ Happy | Credenciales correctas               | Devuelve token JWT y datos del usuario |
+| 4    | ❌ Sad   | Email no existe                      | Lanza error `UNAUTHORIZED`             |
+| 5    | ❌ Sad   | Password incorrecta                  | Lanza error `UNAUTHORIZED`             |
+| 6    | ❌ Sad   | Usuario inactivo (`isActive: false`) | Lanza error `FORBIDDEN`                |
 
 #### `logout(token)`
 
 | Caso | Tipo     | Descripción  | Resultado esperado                             |
 | ---- | -------- | ------------ | ---------------------------------------------- |
-| 11   | ✅ Happy | Token válido | Agrega el token a la blocklist y devuelve true |
+| 7    | ✅ Happy | Token válido | Agrega el token a la blocklist y devuelve true |
 
 #### `getMe(userId)`
 
 | Caso | Tipo     | Descripción                | Resultado esperado                      |
 | ---- | -------- | -------------------------- | --------------------------------------- |
-| 12   | ✅ Happy | ID válido y usuario activo | Devuelve datos del usuario sin password |
-| 13   | ❌ Sad   | ID no existe               | Lanza error `NOT_FOUND`                 |
+| 8    | ✅ Happy | ID válido y usuario activo | Devuelve datos del usuario sin password |
+| 9    | ❌ Sad   | ID no existe o usuario inactivo| Lanza error `NOT_FOUND`                 |
 
 #### `updateMe(userId, updateData)`
 
 | Caso | Tipo     | Descripción                           | Resultado esperado                    |
 | ---- | -------- | ------------------------------------- | ------------------------------------- |
-| 14   | ✅ Happy | Actualiza name                        | Devuelve usuario con name actualizado |
-| 15   | ✅ Happy | Actualiza password                    | Password se guarda hasheada           |
-| 16   | ❌ Sad   | Ningún campo válido proporcionado     | Lanza error `VALIDATION_ERROR`        |
-| 17   | ❌ Sad   | Nuevo email ya usado por otro usuario | Lanza error `CONFLICT`                |
-| 18   | ❌ Sad   | Intenta cambiar `role`                | El campo `role` es ignorado           |
-| 19   | ❌ Sad   | Usuario no encontrado en DB           | Lanza error `NOT_FOUND`               |
+| 10   | ✅ Happy | Actualiza name                        | Devuelve usuario con name actualizado |
+| 11   | ✅ Happy | Actualiza password                    | Password se guarda hasheada           |
+| 12   | ❌ Sad   | Ningún campo válido proporcionado     | Lanza error `VALIDATION_ERROR`        |
+| 13   | ❌ Sad   | Intenta cambiar `role`                | El campo `role` es ignorado           |
+| 14   | ❌ Sad   | Usuario no encontrado en DB           | Lanza error `NOT_FOUND`               |
 
 #### `deleteMe(userId)`
 
 | Caso | Tipo     | Descripción                                            | Resultado esperado        |
 | ---- | -------- | ------------------------------------------------------ | ------------------------- |
-| 20   | ✅ Happy | Usuario con rol `user` se elimina a sí mismo           | `isActive` pasa a `false` |
-| 21   | ✅ Happy | Admin se elimina a sí mismo habiendo otro admin activo | `isActive` pasa a `false` |
-| 22   | ❌ Sad   | Último admin activo intenta eliminarse                 | Lanza error `BAD_REQUEST` |
+| 15   | ✅ Happy | Usuario con rol `user` se elimina a sí mismo           | `isActive` pasa a `false` |
+| 16   | ✅ Happy | Admin se elimina a sí mismo habiendo otro admin activo | `isActive` pasa a `false` |
+| 17   | ❌ Sad   | Último admin activo intenta eliminarse                 | Lanza error `BAD_REQUEST` |
 
 ---
 
@@ -197,16 +192,15 @@ Los services se testean de forma **completamente aislada**. Todas las dependenci
 | 7    | ✅ Happy | Admin actualiza cualquier campo     | Actualización completa         |
 | 8    | ✅ Happy | Admin cambia `role` de user a admin | Role actualizado               |
 | 9    | ❌ Sad   | Ningún campo válido proporcionado   | Lanza error `VALIDATION_ERROR` |
-| 10   | ❌ Sad   | Nuevo email ya usado                | Lanza error `CONFLICT`         |
-| 11   | ❌ Sad   | Usuario no encontrado               | Lanza error `NOT_FOUND`        |
+| 10   | ❌ Sad   | Usuario no encontrado               | Lanza error `NOT_FOUND`        |
 
-#### `deleteUser(id, currentAdminId)`
+#### `deleteUser(id)`
 
 | Caso | Tipo     | Descripción                            | Resultado esperado        |
 | ---- | -------- | -------------------------------------- | ------------------------- |
-| 12   | ✅ Happy | Admin elimina a otro usuario           | `isActive` pasa a `false` |
-| 13   | ❌ Sad   | ID no existe                           | Lanza error `NOT_FOUND`   |
-| 14   | ❌ Sad   | Último admin activo intenta eliminarse | Lanza error `BAD_REQUEST` |
+| 11   | ✅ Happy | Admin elimina a otro usuario           | `isActive` pasa a `false` |
+| 12   | ❌ Sad   | ID no existe                           | Lanza error `NOT_FOUND`   |
+| 13   | ❌ Sad   | Último admin activo intenta eliminarse | Lanza error `BAD_REQUEST` |
 
 ---
 
@@ -222,61 +216,75 @@ Cada suite limpia la base de datos antes de cada test con `clearDatabase()`.
 
 #### `POST /api/auth/register`
 
-| Caso | Tipo     | Input                        | Status | Response                                                  |
-| ---- | -------- | ---------------------------- | ------ | --------------------------------------------------------- |
-| 1    | ✅ Happy | Body válido, primer usuario  | 201    | `success: true`, user con `role: 'admin'`, sin `password` |
-| 2    | ✅ Happy | Body válido, segundo usuario | 201    | `success: true`, user con `role: 'user'`                  |
-| 3    | ❌ Sad   | Email duplicado              | 409    | `success: false`, `error.code: 'CONFLICT'`                |
-| 4    | ❌ Sad   | Body vacío                   | 400    | `success: false`, `error.code: 'VALIDATION_ERROR'`        |
-| 5    | ❌ Sad   | Email inválido               | 400    | `success: false`, `error.code: 'VALIDATION_ERROR'`        |
-| 6    | ❌ Sad   | Password sin mayúscula       | 400    | `success: false`, `error.code: 'VALIDATION_ERROR'`        |
+| Caso | Tipo     | Input                         | Status | Response                                                  |
+| ---- | -------- | ----------------------------- | ------ | --------------------------------------------------------- |
+| 1    | ✅ Happy | Body válido, primer usuario   | 201    | `success: true`, user con `role: 'admin'`, sin `password` |
+| 2    | ✅ Happy | Body válido, segundo usuario  | 201    | `success: true`, user con `role: 'user'`                  |
+| 3    | ❌ Sad   | Email duplicado               | 409    | `success: false`, `error.code: 'CONFLICT'`                |
+| 4    | ❌ Sad   | Nombre faltante o vacío       | 400    | `success: false`, `error.code: 'VALIDATION_ERROR'`        |
+| 5    | ❌ Sad   | Nombre corto (< 2) o largo    | 400    | `success: false`, `error.code: 'VALIDATION_ERROR'`        |
+| 6    | ❌ Sad   | Email faltante                | 400    | `success: false`, `error.code: 'VALIDATION_ERROR'`        |
+| 7    | ❌ Sad   | Email inválido                | 400    | `success: false`, `error.code: 'VALIDATION_ERROR'`        |
+| 8    | ❌ Sad   | Password faltante             | 400    | `success: false`, `error.code: 'VALIDATION_ERROR'`        |
+| 9    | ❌ Sad   | Password menor a 8 caracteres | 400    | `success: false`, `error.code: 'VALIDATION_ERROR'`        |
+| 10   | ❌ Sad   | Password sin minúscula        | 400    | `success: false`, `error.code: 'VALIDATION_ERROR'`        |
+| 11   | ❌ Sad   | Password sin mayúscula        | 400    | `success: false`, `error.code: 'VALIDATION_ERROR'`        |
+| 12   | ❌ Sad   | Password sin número           | 400    | `success: false`, `error.code: 'VALIDATION_ERROR'`        |
 
 #### `POST /api/auth/login`
 
 | Caso | Tipo     | Input                  | Status | Response                                           |
 | ---- | -------- | ---------------------- | ------ | -------------------------------------------------- |
-| 7    | ✅ Happy | Credenciales correctas | 200    | `success: true`, `token` presente, sin `password`  |
-| 8    | ❌ Sad   | Email no registrado    | 401    | `success: false`, `error.code: 'UNAUTHORIZED'`     |
-| 9    | ❌ Sad   | Password incorrecta    | 401    | `success: false`, `error.code: 'UNAUTHORIZED'`     |
-| 10   | ❌ Sad   | Usuario inactivo       | 403    | `success: false`, `error.code: 'FORBIDDEN'`        |
-| 11   | ❌ Sad   | Body vacío             | 400    | `success: false`, `error.code: 'VALIDATION_ERROR'` |
+| 13   | ✅ Happy | Credenciales correctas | 200    | `success: true`, `token` presente, sin `password`  |
+| 14   | ❌ Sad   | Email no registrado    | 401    | `success: false`, `error.code: 'UNAUTHORIZED'`     |
+| 15   | ❌ Sad   | Password incorrecta    | 401    | `success: false`, `error.code: 'UNAUTHORIZED'`     |
+| 16   | ❌ Sad   | Usuario inactivo       | 403    | `success: false`, `error.code: 'FORBIDDEN'`        |
+| 17   | ❌ Sad   | Email faltante         | 400    | `success: false`, `error.code: 'VALIDATION_ERROR'` |
+| 18   | ❌ Sad   | Email inválido         | 400    | `success: false`, `error.code: 'VALIDATION_ERROR'` |
+| 19   | ❌ Sad   | Password faltante      | 400    | `success: false`, `error.code: 'VALIDATION_ERROR'` |
 
 #### `POST /api/auth/logout`
 
 | Caso | Tipo     | Input                           | Status | Response                                       |
 | ---- | -------- | ------------------------------- | ------ | ---------------------------------------------- |
-| 12   | ✅ Happy | Token válido                    | 200    | `success: true`                                |
-| 13   | ❌ Sad   | Sin token                       | 401    | `success: false`, `error.code: 'UNAUTHORIZED'` |
-| 14   | ❌ Sad   | Token ya invalidado (blocklist) | 401    | `success: false`, `error.code: 'UNAUTHORIZED'` |
+| 20   | ✅ Happy | Token válido                    | 200    | `success: true`                                |
+| 21   | ❌ Sad   | Sin token                       | 401    | `success: false`, `error.code: 'UNAUTHORIZED'` |
+| 22   | ❌ Sad   | Token ya invalidado (blocklist) | 401    | `success: false`, `error.code: 'UNAUTHORIZED'` |
 
 #### `GET /api/auth/me`
 
 | Caso | Tipo     | Input          | Status | Response                                          |
 | ---- | -------- | -------------- | ------ | ------------------------------------------------- |
-| 15   | ✅ Happy | Token válido   | 200    | `success: true`, datos del usuario sin `password` |
-| 16   | ❌ Sad   | Sin token      | 401    | `success: false`, `error.code: 'UNAUTHORIZED'`    |
-| 17   | ❌ Sad   | Token expirado | 401    | `success: false`, `error.code: 'UNAUTHORIZED'`    |
+| 23   | ✅ Happy | Token válido   | 200    | `success: true`, datos del usuario sin `password` |
+| 24   | ❌ Sad   | Sin token      | 401    | `success: false`, `error.code: 'UNAUTHORIZED'`    |
+| 25   | ❌ Sad   | Token expirado | 401    | `success: false`, `error.code: 'UNAUTHORIZED'`    |
 
 #### `PUT /api/auth/me`
 
-| Caso | Tipo     | Input                    | Status | Response                                           |
-| ---- | -------- | ------------------------ | ------ | -------------------------------------------------- |
-| 18   | ✅ Happy | Actualiza name           | 200    | `success: true`, name actualizado                  |
-| 19   | ✅ Happy | Actualiza password       | 200    | `success: true`, nueva password funciona en login  |
-| 20   | ❌ Sad   | Sin campos válidos       | 400    | `success: false`, `error.code: 'VALIDATION_ERROR'` |
-| 21   | ❌ Sad   | Email ya usado por otro  | 409    | `success: false`, `error.code: 'CONFLICT'`         |
-| 22   | ❌ Sad   | Sin token                | 401    | `success: false`, `error.code: 'UNAUTHORIZED'`     |
-| 23   | ❌ Sad   | Intenta cambiar `role`   | 200    | `role` no cambia en la respuesta                   |
-| 24   | ❌ Sad   | Usuario no encontrado DB | 404    | `success: false`, `error.code: 'NOT_FOUND'`        |
+| Caso | Tipo     | Input                         | Status | Response                                           |
+| ---- | -------- | ----------------------------- | ------ | -------------------------------------------------- |
+| 26   | ✅ Happy | Actualiza name                | 200    | `success: true`, name actualizado                  |
+| 27   | ✅ Happy | Actualiza password            | 200    | `success: true`, nueva password funciona en login  |
+| 28   | ❌ Sad   | Sin campos válidos            | 400    | `success: false`, `error.code: 'VALIDATION_ERROR'` |
+| 29   | ❌ Sad   | Nombre corto (< 2) o largo    | 400    | `success: false`, `error.code: 'VALIDATION_ERROR'` |
+| 30   | ❌ Sad   | Email inválido                | 400    | `success: false`, `error.code: 'VALIDATION_ERROR'` |
+| 31   | ❌ Sad   | Password menor a 8 caracteres | 400    | `success: false`, `error.code: 'VALIDATION_ERROR'` |
+| 32   | ❌ Sad   | Password sin minúscula        | 400    | `success: false`, `error.code: 'VALIDATION_ERROR'` |
+| 33   | ❌ Sad   | Password sin mayúscula        | 400    | `success: false`, `error.code: 'VALIDATION_ERROR'` |
+| 34   | ❌ Sad   | Password sin número           | 400    | `success: false`, `error.code: 'VALIDATION_ERROR'` |
+| 35   | ❌ Sad   | Email ya usado por otro       | 409    | `success: false`, `error.code: 'CONFLICT'`         |
+| 36   | ❌ Sad   | Sin token                     | 401    | `success: false`, `error.code: 'UNAUTHORIZED'`     |
+| 37   | ❌ Sad   | Intenta cambiar `role`        | 200    | `role` no cambia en la respuesta                   |
+| 38   | ❌ Sad   | Usuario no encontrado DB      | 404    | `success: false`, `error.code: 'NOT_FOUND'`        |
 
 #### `DELETE /api/auth/me`
 
 | Caso | Tipo     | Input                                       | Status | Response                                       |
 | ---- | -------- | ------------------------------------------- | ------ | ---------------------------------------------- |
-| 23   | ✅ Happy | Usuario `user` se elimina a sí mismo        | 200    | `success: true`, mensaje de confirmación       |
-| 24   | ✅ Happy | Admin se elimina habiendo otro admin activo | 200    | `success: true`, mensaje de confirmación       |
-| 25   | ❌ Sad   | Último admin activo intenta eliminarse      | 400    | `success: false`, `error.code: 'BAD_REQUEST'`  |
-| 26   | ❌ Sad   | Sin token                                   | 401    | `success: false`, `error.code: 'UNAUTHORIZED'` |
+| 39   | ✅ Happy | Usuario `user` se elimina a sí mismo        | 200    | `success: true`, mensaje de confirmación       |
+| 40   | ✅ Happy | Admin se elimina habiendo otro admin activo | 200    | `success: true`, mensaje de confirmación       |
+| 41   | ❌ Sad   | Último admin activo intenta eliminarse      | 400    | `success: false`, `error.code: 'BAD_REQUEST'`  |
+| 42   | ❌ Sad   | Sin token                                   | 401    | `success: false`, `error.code: 'UNAUTHORIZED'` |
 
 ---
 
@@ -331,11 +339,11 @@ Cada suite limpia la base de datos antes de cada test con `clearDatabase()`.
 
 | Suite       | Tests unitarios | Tests de integración | Total  |
 | ----------- | --------------- | -------------------- | ------ |
-| AuthService | 22              | —                    | 22     |
-| UserService | 14              | —                    | 14     |
-| Auth Routes | —               | 28                   | 28     |
-| User Routes | —               | 22                   | 22     |
-| **Total**   | **36**          | **50**               | **86** |
+| AuthService | 17              | —                    | 17     |
+| UserService | 13              | —                    | 13     |
+| Auth Routes | —               | 42                   | 42     |
+| User Routes | —               | 20                   | 20     |
+| **Total**   | **30**          | **62**               | **92** |
 
 ---
 
@@ -359,9 +367,9 @@ Cada suite limpia la base de datos antes de cada test con `clearDatabase()`.
 | ---- | ------------------------------------------------------------------------------------------- | ------------------------------------------------ |
 | 1    | Instalar Jest, Supertest y mongodb-memory-server. Configurar `jest.config.js` y `.env.test` | `npm test` corre sin errores (0 tests)           |
 | 2    | Crear helpers `db.js` y `factories.js`                                                      | Helpers importables sin errores                  |
-| 3    | Tests unitarios de `AuthService` (19 tests)                                                 | 19 tests pasan, commit                           |
-| 4    | Tests unitarios de `UserService` (12 tests)                                                 | 12 tests pasan, commit                           |
-| 5    | Tests de integración de `auth.routes` (26 tests)                                            | 26 tests pasan, commit                           |
+| 3    | Tests unitarios de `AuthService` (17 tests)                                                 | 17 tests pasan, commit                           |
+| 4    | Tests unitarios de `UserService` (13 tests)                                                 | 13 tests pasan, commit                           |
+| 5    | Tests de integración de `auth.routes` (42 tests)                                            | 42 tests pasan, commit                           |
 | 6    | Tests de integración de `user.routes` (20 tests)                                            | 20 tests pasan, commit                           |
 | 7    | Configurar coverage y verificar umbral del 80%                                              | `npm run test:coverage` pasa sin errores, commit |
 
