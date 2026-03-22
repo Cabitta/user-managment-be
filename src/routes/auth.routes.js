@@ -121,6 +121,12 @@ router.post('/logout', authenticate, authController.logout);
  *         description: No autorizado
  *       404:
  *         description: Usuario no encontrado
+ */
+router.get('/me', authenticate, authController.getMe);
+
+/**
+ * @openapi
+ * /api/auth/me:
  *   put:
  *     summary: Actualizar perfil propio
  *     tags: [Auth]
@@ -146,6 +152,12 @@ router.post('/logout', authenticate, authController.logout);
  *         description: Usuario no encontrado
  *       409:
  *         description: Email ya registrado por otro usuario
+ */
+router.put('/me', authenticate, updateMeValidator, handleValidationErrors, authController.updateMe);
+
+/**
+ * @openapi
+ * /api/auth/me:
  *   delete:
  *     summary: Eliminar perfil propio
  *     tags: [Auth]
@@ -161,8 +173,6 @@ router.post('/logout', authenticate, authController.logout);
  *       404:
  *         description: Usuario no encontrado
  */
-router.get('/me', authenticate, authController.getMe);
-router.put('/me', authenticate, updateMeValidator, handleValidationErrors, authController.updateMe);
 router.delete('/me', authenticate, authController.deleteMe);
 
 module.exports = router;
