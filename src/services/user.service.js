@@ -89,9 +89,8 @@ class UserService {
 
   /**
    * Realiza un borrado lógico del usuario.
-   * El usuario no puede eliminarse a sí mismo.
    */
-  async deleteUser(id, currentAdminId) {
+  async deleteUser(id) {
     // 1. Buscar al usuario que se quiere eliminar
     const userToDelete = await userRepository.findById(id);
     if (!userToDelete) {

@@ -119,6 +119,8 @@ router.post('/logout', authenticate, authController.logout);
  *                 data: { $ref: '#/components/schemas/User' }
  *       401:
  *         description: No autorizado
+ *       404:
+ *         description: Usuario no encontrado
  *   put:
  *     summary: Actualizar perfil propio
  *     tags: [Auth]
@@ -137,9 +139,13 @@ router.post('/logout', authenticate, authController.logout);
  *       200:
  *         description: Perfil actualizado
  *       400:
- *         description: Datos inválidos
+ *         description: Datos inválidos o vacíos
  *       401:
  *         description: No autorizado
+ *       404:
+ *         description: Usuario no encontrado
+ *       409:
+ *         description: Email ya registrado por otro usuario
  *   delete:
  *     summary: Eliminar perfil propio
  *     tags: [Auth]
@@ -149,9 +155,11 @@ router.post('/logout', authenticate, authController.logout);
  *       200:
  *         description: Perfil eliminado satisfactoriamente
  *       400:
- *         description: No se puede eliminar al último admin
+ *         description: No se puede eliminar al último admin activo
  *       401:
  *         description: No autorizado
+ *       404:
+ *         description: Usuario no encontrado
  */
 router.get('/me', authenticate, authController.getMe);
 router.put('/me', authenticate, updateMeValidator, handleValidationErrors, authController.updateMe);
