@@ -157,11 +157,10 @@ Los services se testean de forma **completamente aislada**. Todas las dependenci
 
 #### `deleteMe(userId)`
 
-| Caso | Tipo     | Descripción                                            | Resultado esperado        |
-| ---- | -------- | ------------------------------------------------------ | ------------------------- |
-| 15   | ✅ Happy | Usuario con rol `user` se elimina a sí mismo           | `isActive` pasa a `false` |
-| 16   | ✅ Happy | Admin se elimina a sí mismo habiendo otro admin activo | `isActive` pasa a `false` |
-| 17   | ❌ Sad   | Último admin activo intenta eliminarse                 | Lanza error `BAD_REQUEST` |
+| Caso | Tipo     | Descripción                                             | Resultado esperado                               |
+| ---- | -------- | ------------------------------------------------------- | ------------------------------------------------ |
+| 15   | ✅ Happy | Delega exitosamente la lógica en `UserService`          | Llama a `userService.deleteUser(userId)` y éxito |
+| 16   | ❌ Sad   | Propaga cualquier error lanzado por `UserService`       | Lanza exactamente el mismo error de `deleteUser` |
 
 ---
 
@@ -177,30 +176,34 @@ Los services se testean de forma **completamente aislada**. Todas las dependenci
 | 2    | ✅ Happy | Con `role: 'admin'` | Devuelve solo admins                 |
 | 3    | ✅ Happy | Con `search: 'ana'` | Filtra por nombre y email            |
 | 4    | ✅ Happy | `limit` mayor a 100 | Se recorta silenciosamente a 100     |
+| 5    | ✅ Happy | `limit` menor a 1   | Se ajusta silenciosamente a 1        |
+| 6    | ✅ Happy | `page` menor a 1    | Se ajusta silenciosamente a 1        |
 
 #### `getUserById(id)`
 
 | Caso | Tipo     | Descripción  | Resultado esperado            |
 | ---- | -------- | ------------ | ----------------------------- |
-| 5    | ✅ Happy | ID válido    | Devuelve usuario sin password |
-| 6    | ❌ Sad   | ID no existe | Lanza error `NOT_FOUND`       |
+| 7    | ✅ Happy | ID válido    | Devuelve usuario sin password |
+| 8    | ❌ Sad   | ID no existe | Lanza error `NOT_FOUND`       |
 
 #### `updateUser(id, updateData)`
 
 | Caso | Tipo     | Descripción                         | Resultado esperado             |
 | ---- | -------- | ----------------------------------- | ------------------------------ |
-| 7    | ✅ Happy | Admin actualiza cualquier campo     | Actualización completa         |
-| 8    | ✅ Happy | Admin cambia `role` de user a admin | Role actualizado               |
-| 9    | ❌ Sad   | Ningún campo válido proporcionado   | Lanza error `VALIDATION_ERROR` |
-| 10   | ❌ Sad   | Usuario no encontrado               | Lanza error `NOT_FOUND`        |
+| 9    | ✅ Happy | Admin actualiza cualquier campo     | Actualización completa         |
+| 10   | ✅ Happy | Admin cambia `role` de user a admin | Role actualizado               |
+| 11   | ❌ Sad   | Ningún campo válido proporcionado   | Lanza error `VALIDATION_ERROR` |
+| 12   | ❌ Sad   | Usuario no encontrado               | Lanza error `NOT_FOUND`        |
 
 #### `deleteUser(id)`
 
-| Caso | Tipo     | Descripción                            | Resultado esperado        |
-| ---- | -------- | -------------------------------------- | ------------------------- |
-| 11   | ✅ Happy | Admin elimina a otro usuario           | `isActive` pasa a `false` |
-| 12   | ❌ Sad   | ID no existe                           | Lanza error `NOT_FOUND`   |
-| 13   | ❌ Sad   | Último admin activo intenta eliminarse | Lanza error `BAD_REQUEST` |
+| Caso | Tipo     | Descripción                                            | Resultado esperado        |
+| ---- | -------- | ------------------------------------------------------ | ------------------------- |
+| 13   | ✅ Happy | Usuario con rol `user` se elimina a sí mismo           | `isActive` pasa a `false` |
+| 14   | ✅ Happy | Admin se elimina a sí mismo habiendo otro admin activo | `isActive` pasa a `false` |
+| 15   | ✅ Happy | Admin elimina a otro usuario                           | `isActive` pasa a `false` |
+| 16   | ❌ Sad   | ID no existe                                           | Lanza error `NOT_FOUND`   |
+| 17   | ❌ Sad   | Último admin activo intenta eliminarse                 | Lanza error `BAD_REQUEST` |
 
 ---
 
@@ -339,11 +342,11 @@ Cada suite limpia la base de datos antes de cada test con `clearDatabase()`.
 
 | Suite       | Tests unitarios | Tests de integración | Total  |
 | ----------- | --------------- | -------------------- | ------ |
-| AuthService | 17              | —                    | 17     |
-| UserService | 13              | —                    | 13     |
+| AuthService | 16              | —                    | 16     |
+| UserService | 17              | —                    | 17     |
 | Auth Routes | —               | 42                   | 42     |
 | User Routes | —               | 20                   | 20     |
-| **Total**   | **30**          | **62**               | **92** |
+| **Total**   | **33**          | **62**               | **95** |
 
 ---
 
@@ -367,8 +370,8 @@ Cada suite limpia la base de datos antes de cada test con `clearDatabase()`.
 | ---- | ------------------------------------------------------------------------------------------- | ------------------------------------------------ |
 | 1    | Instalar Jest, Supertest y mongodb-memory-server. Configurar `jest.config.js` y `.env.test` | `npm test` corre sin errores (0 tests)           |
 | 2    | Crear helpers `db.js` y `factories.js`                                                      | Helpers importables sin errores                  |
-| 3    | Tests unitarios de `AuthService` (17 tests)                                                 | 17 tests pasan, commit                           |
-| 4    | Tests unitarios de `UserService` (13 tests)                                                 | 13 tests pasan, commit                           |
+| 3    | Tests unitarios de `AuthService` (16 tests)                                                 | 16 tests pasan, commit                           |
+| 4    | Tests unitarios de `UserService` (17 tests)                                                 | 17 tests pasan, commit                           |
 | 5    | Tests de integración de `auth.routes` (42 tests)                                            | 42 tests pasan, commit                           |
 | 6    | Tests de integración de `user.routes` (20 tests)                                            | 20 tests pasan, commit                           |
 | 7    | Configurar coverage y verificar umbral del 80%                                              | `npm run test:coverage` pasa sin errores, commit |
