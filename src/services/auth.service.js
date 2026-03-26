@@ -143,7 +143,7 @@ class AuthService {
    */
   async deleteMe(userId) {
     const userService = require('./user.service');
-    return await userService.deleteUser(userId, userId);
+    return await userService.deleteUser(userId);
   }
 }
 
