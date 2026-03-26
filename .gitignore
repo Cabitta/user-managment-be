@@ -3,6 +3,7 @@ node_modules/
 
 # Variables de entorno (secretos)
 .env
+.env.test
 
 # macOS
 .DS_Store
