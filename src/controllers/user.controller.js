@@ -10,9 +10,9 @@ class UserController {
    * Obtiene todos los usuarios con paginación y filtros.
    */
   async getAll(req, res) {
-    const { page, limit, role } = req.query;
+    const { page, limit, role, search } = req.query;
 
-    const result = await userService.getAllUsers({ page, limit, role });
+    const result = await userService.getAllUsers({ page, limit, role, search });
 
     res.status(200).json({
       success: true,

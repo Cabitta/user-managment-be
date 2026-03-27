@@ -10,7 +10,7 @@ class UserRepository {
    * Busca usuarios con filtros, paginación y ordenamiento.
    * Por defecto busca todos los usuarios (activos e inactivos).
    */
-  async findAll(filters = {}, options = {}) {
+  async findAll(filters = {}) {
     const { page = 1, limit = 10, role, isActive, search } = filters;
 
     const query = {};

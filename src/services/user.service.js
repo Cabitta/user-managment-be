@@ -15,8 +15,11 @@ class UserService {
     let { page = 1, limit = 10, role, search } = filters;
 
     // 1. Normalización de parámetros (Regla de negocio #4.4)
-    page = parseInt(page, 10) || 1;
-    limit = parseInt(limit, 10) || 10;
+    page = parseInt(page, 10);
+    if (isNaN(page)) page = 1;
+    
+    limit = parseInt(limit, 10);
+    if (isNaN(limit)) limit = 10;
 
     // El spec dice: máximo 100, recortar silenciosamente si es mayor.
     if (limit > 100) limit = 100;
