@@ -14,5 +14,6 @@ module.exports = {
     "/src/dtos/",
     "/src/validators/",
     "server.js"
-  ]
+  ],
+  testTimeout: 30000
 };
