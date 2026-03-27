@@ -534,6 +534,7 @@ El proyecto se construye en fases. **No se avanza a la siguiente fase hasta que 
 | 17   | Service + Controller + endpoint `DELETE /api/users/:id`                                                      | Soft-delete (solo admin), commit                                             |
 | 18   | Validadores con `express-validator` en todos los endpoints                                                   | Requests inválidos devuelven 400 con detalle, commit                         |
 | 19   | Configurar Swagger (`swagger-jsdoc` + `swagger-ui-express`)                                                  | Documentación visible en `GET /api/docs`, commit                             |
+| 20   | Suite de Tests: Jest + Supertest (ver [`spec-testing-backend.md`](spec-testing-backend.md))           | Cobertura > 80% y 100% tests passing, commit                                 |
 
 **Convención de commits (simplificada):**
 
@@ -552,7 +553,6 @@ Estas decisiones se tomarán cuando el proyecto evolucione a producción:
 - **Plataforma de deploy** (Railway, Render, Fly.io, etc.)
 - **Refresh tokens** — para sesiones de larga duración sin re-login
 - **Logging estructurado** — con Winston o Pino (reemplaza morgan)
-- **Tests automatizados** — Jest + Supertest
 - **Filtro de usuarios inactivos** — exponer o no vía query params
 - **Blocklist en Redis** — reemplaza la blocklist en memoria para producción
 

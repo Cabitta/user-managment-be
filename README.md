@@ -57,6 +57,26 @@ Copiá `.env.example` a `.env` y completá los valores (especialmente `MONGODB_U
     - **Desarrollo (con auto-reload):** `npm run dev`
     - **Producción:** `npm start`
 
+## Testing 🧪
+
+Este proyecto utiliza **Jest** y **Supertest** para asegurar la calidad del código, siguiendo la metodología de desarrollo basada en especificaciones.
+
+*   **Ejecutar todos los tests:**
+    ```bash
+    npm test
+    ```
+*   **Solo tests de integración:**
+    ```bash
+    npm run test:integration
+    ```
+*   **Reporte de cobertura (Coverage):**
+    ```bash
+    npm run test:coverage
+    ```
+
+> [!NOTE]
+> Los tests de integración utilizan `mongodb-memory-server`, por lo que no requieren una base de datos externa configurada.
+
 ## Documentación API
 
 Una vez levantado el backend, podés acceder a la documentación interactiva en:
