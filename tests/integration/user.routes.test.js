@@ -109,6 +109,18 @@ describe('User Routes', () => {
 
       expect(res.status).toBe(404);
     });
+
+    it('debería retornar 404 si el ID está mal formado (CastError)', async () => {
+      const admin = await createAdmin();
+      const token = generateToken(admin);
+
+      const res = await request(app)
+        .get('/api/users/id-invalido')
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(res.status).toBe(404);
+      expect(res.body.error.code).toBe('NOT_FOUND');
+    });
   });
 
   describe('PUT /api/users/:id', () => {

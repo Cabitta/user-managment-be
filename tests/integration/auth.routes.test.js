@@ -135,6 +135,14 @@ describe('Auth Routes', () => {
       const res = await request(app).post('/api/auth/logout');
       expect(res.status).toBe(401);
     });
+
+    it('debería fallar con token inválido/expirado', async () => {
+      const res = await request(app)
+        .post('/api/auth/logout')
+        .set('Authorization', 'Bearer token-invalido');
+      expect(res.status).toBe(401);
+      expect(res.body.error.code).toBe('UNAUTHORIZED');
+    });
   });
 
   describe('GET /api/auth/me', () => {
