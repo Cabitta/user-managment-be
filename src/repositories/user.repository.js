@@ -11,11 +11,12 @@ class UserRepository {
    * Por defecto busca todos los usuarios (activos e inactivos).
    */
   async findAll(filters = {}) {
-    const { page = 1, limit = 10, role, isActive, search } = filters;
+    const { page = 1, limit = 10, role, isActive, search, excludeId } = filters;
 
     const query = {};
     if (role) query.role = role;
     if (isActive !== undefined) query.isActive = isActive;
+    if (excludeId) query._id = { $ne: excludeId };
 
     // Lógica de búsqueda (nombre o email)
     if (search) {

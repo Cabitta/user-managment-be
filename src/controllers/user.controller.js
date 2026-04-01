@@ -11,8 +11,9 @@ class UserController {
    */
   async getAll(req, res) {
     const { page, limit, role, search } = req.query;
+    const currentUserId = req.user.id;
 
-    const result = await userService.getAllUsers({ page, limit, role, search });
+    const result = await userService.getAllUsers({ page, limit, role, search }, currentUserId);
 
     res.status(200).json({
       success: true,

@@ -11,7 +11,7 @@ class UserService {
    * Obtiene una lista paginada de usuarios.
    * Reservado para administradores.
    */
-  async getAllUsers(filters = {}) {
+  async getAllUsers(filters = {}, currentUserId) {
     let { page = 1, limit = 10, role, search } = filters;
 
     // 1. Normalización de parámetros (Regla de negocio #4.4)
@@ -27,7 +27,13 @@ class UserService {
     if (page < 1) page = 1;
 
     // 2. Obtener datos del repositorio (ya devuelve data y pagination)
-    const result = await userRepository.findAll({ page, limit, role, search });
+    const result = await userRepository.findAll({ 
+      page, 
+      limit, 
+      role, 
+      search,
+      excludeId: currentUserId 
+    });
 
     // 3. Preparar respuesta con DTOs
     const usersDTO = result.data.map(user => userDTO.toResponseDTO(user));
