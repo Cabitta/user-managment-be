@@ -218,6 +218,7 @@ El JWT se incluye en la respuesta. El cliente lo guarda y lo envía en cada requ
 
 > Si el cliente envía `limit` mayor a 100, el servidor lo recorta silenciosamente a 100.  
 > `search` filtra simultáneamente sobre `name` y `email` usando regex. Se puede combinar con `role` y `page`.
+> **Nota:** El resultado excluye siempre al usuario que realiza la petición (`req.user.id`).
 
 **Response `200 OK`:**
 
@@ -356,6 +357,7 @@ Realiza un **soft-delete**: establece `isActive: false`.
 4. En `GET /api/users`, el administrador visualiza a todos los usuarios (activos e inactivos) para tener una gestión completa del sistema.
 5. Si se intenta login con un usuario inactivo (`isActive: false`), se devuelve error `403 Forbidden`.
 6. Las **contraseñas** deben tener mínimo 8 caracteres, al menos una letra mayúscula, una minúscula y un número.
+7. En `GET /api/users`, el usuario que realiza la petición es **excluido automáticamente** de los resultados para evitar que el administrador se gestione a sí mismo en la lista general.
 
 ---
 
