@@ -27,7 +27,7 @@ describe('User Routes', () => {
 
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
-      expect(res.body.data).toHaveLength(2);
+      expect(res.body.data).toHaveLength(1); // El admin está excluido
       expect(res.body).toHaveProperty('pagination');
     });
 
@@ -41,8 +41,7 @@ describe('User Routes', () => {
         .set('Authorization', `Bearer ${token}`);
 
       expect(res.status).toBe(200);
-      expect(res.body.data).toHaveLength(1);
-      expect(res.body.data[0].role).toBe('admin');
+      expect(res.body.data).toHaveLength(0); // El único admin es el que hace la petición
     });
 
     it('debería filtrar por búsqueda "?search=anabella" (Caso 3)', async () => {
