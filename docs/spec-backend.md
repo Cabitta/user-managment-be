@@ -1,7 +1,7 @@
 # Spec — API REST: Administrador de Usuarios
 
-**Versión:** 1.2  
-**Fecha:** 2026-02-26  
+**Versión:** 1.3  
+**Fecha:** 2026-04-02  
 **Metodología:** Spec-Driven Development (SDD)
 
 ---
@@ -28,7 +28,7 @@ Una API REST que permite gestionar usuarios de una aplicación. Soporta registro
 | Campo       | Tipo     | Requerido | Descripción                                     |
 | ----------- | -------- | --------- | ----------------------------------------------- |
 | `_id`       | ObjectId | Auto      | ID único generado por MongoDB                   |
-| `name`      | String   | Sí        | Nombre completo del usuario                     |
+| `name`      | String   | Sí        | Nombre completo (entre 2 y 50 caracteres)       |
 | `email`     | String   | Sí        | Email único, usado para login                   |
 | `password`  | String   | Sí        | Hash bcrypt (nunca se devuelve en la respuesta) |
 | `role`      | String   | Sí        | Enum: `"admin"` o `"user"`. Default: `"user"`   |
