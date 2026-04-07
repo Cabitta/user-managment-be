@@ -542,6 +542,7 @@ El proyecto se construye en fases. **No se avanza a la siguiente fase hasta que 
 
 - `feat:` — nueva funcionalidad (endpoint, middleware, modelo)
 - `fix:` — corrección de bug
+- `refactor:` — mejoras internas de código (sin cambios funcionales)
 - `chore:` — configuración, dependencias, setup
 - `docs:` — cambios en documentación o Swagger
 - `test:` — agregar o modificar tests
