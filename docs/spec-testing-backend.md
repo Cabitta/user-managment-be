@@ -98,6 +98,8 @@ Maneja el ciclo de vida de `mongodb-memory-server`:
 - `clearDatabase()` — limpia todas las colecciones entre tests
 - `disconnect()` — destruye la instancia al terminar
 
+> **Nota para Integración con Frontend E2E:** `db.js` se utiliza también como motor en memoria para correr el servidor efímero (`server.e2e.js`) usado por los tests E2E de Playwright del Frontend, asegurando aislación completa sin usar Atlas.
+
 ### `tests/helpers/factories.js`
 
 Funciones que crean datos de prueba consistentes:

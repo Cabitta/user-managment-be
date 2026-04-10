@@ -9,6 +9,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
+    "dev:e2e": "node server.e2e.js",
     "test": "jest --passWithNoTests",
     "test:unit": "jest tests/unit",
     "test:integration": "jest tests/integration",
