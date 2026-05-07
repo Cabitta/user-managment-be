@@ -21,6 +21,15 @@ const start = async () => {
   await clearDatabase();
   console.log('Database cleared for E2E start.');
 
+  // Create a stable initial admin for E2E tests
+  await User.create({
+    name: 'Admin E2E',
+    email: 'admin_e2e@example.com',
+    password: 'Password123!',
+    role: 'admin'
+  });
+  console.log('Seed Admin created: admin_e2e@example.com');
+
   app.listen(PORT, () => {
     console.log(`[E2E] Servidor efímero corriendo en el puerto ${PORT}`);
   });
