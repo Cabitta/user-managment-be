@@ -1,5 +1,8 @@
 'use strict';
 
+process.env.NODE_ENV = 'test';
+process.env.JWT_SECRET = process.env.JWT_SECRET || 'e2e_secret_key';
+
 require('dotenv').config();
 const app = require('./src/app');
 const { connect } = require('./tests/helpers/db');
@@ -13,14 +16,10 @@ const start = async () => {
   await connect();
   console.log('MongoDB Memory Server connected for E2E testing.');
 
-  // Create an initial mock admin to allow E2E auth bypass if needed
-  await User.create({
-    name: 'Admin E2E Seed',
-    email: 'admin_e2e@example.com',
-    password: 'Password123!',
-    role: 'admin'
-  });
-  console.log('Seed dummy E2E admin user created (admin_e2e@example.com).');
+  // Ensure clean state
+  const { clearDatabase } = require('./tests/helpers/db');
+  await clearDatabase();
+  console.log('Database cleared for E2E start.');
 
   app.listen(PORT, () => {
     console.log(`[E2E] Servidor efímero corriendo en el puerto ${PORT}`);
