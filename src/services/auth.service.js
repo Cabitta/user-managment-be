@@ -28,8 +28,18 @@ class AuthService {
       role
     });
 
-    // 4. Devolver la respuesta limpia (DTO)
-    return userDTO.toResponseDTO(newUser);
+    // 4. Generar JWT (Auto-login tras registro)
+    const token = jwt.sign(
+      { id: newUser._id, role: newUser.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    // 5. Devolver la respuesta limpia (DTO) + Token
+    return {
+      token,
+      user: userDTO.toResponseDTO(newUser)
+    };
   }
 
   /**

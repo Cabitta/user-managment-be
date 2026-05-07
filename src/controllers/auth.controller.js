@@ -13,12 +13,13 @@ class AuthController {
     const { name, email, password } = req.body;
 
     // 1. Llamar al servicio para registrar (el servicio se encarga del rol y DTO)
-    const newUser = await authService.register({ name, email, password });
-
-    // 2. Responder con el usuario creado (DTO ya aplicado)
+    const result = await authService.register({ name, email, password });
+    
+    // 2. Responder con el token y los datos del usuario (DTO ya aplicado)
     res.status(201).json({
       success: true,
-      data: newUser,
+      token: result.token,
+      data: result.user,
     });
   }
 
@@ -26,6 +27,7 @@ class AuthController {
    * Maneja el inicio de sesión.
    */
   async login(req, res) {
+    console.log('[E2E Debug] Login attempt:', req.body);
     const { email, password } = req.body;
 
     // 1. Llamar al servicio para loguear
